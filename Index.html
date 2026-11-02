@@ -1,0 +1,2143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<base target="_blank">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#16233a; --mut:#66708a; --line:#dfe3ec; --bg:#f3f5f9; --card:#fff;
+          --main:#1f3864; --ok:#1e7d45; --okbg:#e2f3e8; --warn:#9a6700; --warnbg:#fff3cd;
+          --bad:#b3261e; --badbg:#fde7e5; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Tahoma, Arial, sans-serif; background:var(--bg); color:var(--ink); font-size:16px; }
+  header { background:var(--main); color:#fff; padding:14px 16px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:5; }
+  header h1 { font-size:17px; margin:0; flex:1; }
+  header button { background:rgba(255,255,255,.15); color:#fff; border:0; padding:8px 12px; border-radius:8px; font-size:14px; }
+  main { padding:14px; max-width:640px; margin:0 auto; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:12px; }
+  .row { display:flex; justify-content:space-between; gap:10px; padding:5px 0; }
+  .row span:first-child { color:var(--mut); flex:none; }
+  .row span:last-child, .row a { text-align:left; word-break:break-word; }
+  a { color:var(--main); }
+  input, select, textarea { width:100%; padding:13px; border:1px solid var(--line); border-radius:10px; font-size:16px; font-family:inherit; margin-bottom:10px; background:#fff; color:var(--ink); }
+  button.big { width:100%; padding:15px; border:0; border-radius:10px; background:var(--main); color:#fff; font-size:17px; font-family:inherit; margin-bottom:10px; }
+  button.big.ok { background:var(--ok); }
+  .csheet { position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:50; display:flex; align-items:flex-end; justify-content:center; }
+  .csbox { background:#fff; width:100%; max-width:640px; border-radius:16px 16px 0 0; padding:16px; }
+  .csbox a.big, .csbox button.big { display:block; text-align:center; text-decoration:none; margin-top:10px; box-sizing:border-box; }
+  .chatbtn { display:flex; justify-content:space-between; align-items:center; width:100%; background:var(--asphalt); color:#fff; border:0; border-radius:16px; padding:13px 16px; font-weight:600; font-size:16px; margin-bottom:10px; cursor:pointer; }
+  .chatbtn i { background:var(--stop); font-style:normal; border-radius:20px; padding:2px 10px; font-size:13px; }
+  .cthread { display:flex; gap:10px; align-items:center; background:#fff; border-radius:16px; padding:12px; margin-bottom:8px; cursor:pointer; box-shadow:0 2px 10px rgba(21,32,58,.05); }
+  .cav { width:42px; height:42px; border-radius:50%; background:#e8efff; color:var(--blue2); display:grid; place-items:center; font-weight:700; flex:none; }
+  .cm { flex:1; min-width:0; } .cm b { font-size:15px; } .cm p { margin:3px 0 0; font-size:13px; color:var(--mut); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ctr { font-size:11px; color:var(--mut); text-align:left; } .ctr i { display:block; margin-top:4px; background:var(--stop); color:#fff; font-style:normal; border-radius:20px; padding:1px 7px; text-align:center; }
+  .cmsgs { display:flex; flex-direction:column; gap:8px; padding:6px 0 12px; min-height:50vh; }
+  .cday { align-self:center; background:#e3e7ee; color:var(--mut); font-size:11px; border-radius:20px; padding:3px 10px; }
+  .cb { max-width:80%; padding:9px 12px; border-radius:16px; font-size:15px; line-height:1.55; }
+  .cb small { display:block; font-size:10.5px; color:var(--mut); margin-top:3px; text-align:left; }
+  .cb.me { align-self:flex-start; background:var(--asphalt); color:#fff; border-bottom-right-radius:4px; } .cb.me small { color:#9fb0d0; }
+  .cb.them { align-self:flex-end; background:#fff; border-bottom-left-radius:4px; box-shadow:0 1px 4px rgba(21,32,58,.06); }
+  .ctext { white-space:pre-wrap; word-break:break-word; }
+  .cchip { display:inline-block; background:#e8efff; color:var(--blue2); border-radius:10px; padding:2px 8px; font-size:12px; font-weight:600; margin-bottom:4px; cursor:pointer; }
+  .cchip.bad { background:#fdeaea; color:var(--stop); } .cb.me .cchip { background:rgba(255,255,255,.15); color:#fff; }
+  .csys { align-self:center; background:#fff4cc; color:#8a6200; font-size:12px; border-radius:12px; padding:6px 10px; text-align:center; }
+  .ccomp { position:sticky; bottom:0; background:var(--bg); padding:8px 0 12px; }
+  .ccomp .csel { margin-bottom:6px; padding:8px 10px; font-size:13px; }
+  .crow { display:flex; gap:8px; align-items:flex-end; } .crow textarea { margin:0; flex:1; border-radius:18px; padding:10px 14px; resize:none; }
+  .csend { width:48px; height:48px; border-radius:50%; border:0; background:var(--go); color:#fff; font-size:20px; flex:none; cursor:pointer; }
+  .replycard { border-right:6px solid var(--stop); }
+  .replycard .rep { background:#fdeaea; border-radius:14px; padding:10px 12px; margin-bottom:8px; font-size:15px; line-height:1.6; }
+  .replycard .rep small { display:block; color:var(--mut); font-size:12px; margin-top:4px; }
+  .postline { background:#eef0f4; color:#444; border-radius:8px; padding:6px 8px; font-size:12px; margin-top:6px; }
+  .phist { border-top:1px dashed var(--line); padding:8px 0; font-size:14px; }
+  .phist .reo { color:var(--ok); font-weight:bold; margin-top:4px; }
+  a.waic { display:inline-flex; align-items:center; gap:4px; background:var(--main); color:#fff; border-radius:20px; padding:3px 10px; font-size:13px; text-decoration:none; font-weight:bold; margin-inline-start:6px; white-space:nowrap; }
+  .typewarn { background:var(--badbg); color:var(--bad); border-radius:8px; padding:6px 8px; font-size:12px; margin-top:6px; }
+  a.big.wa { background:#25D366; color:#fff; border-color:#25D366; font-weight:bold; }
+  button.big.ghost { background:#fff; color:var(--bad); border:1px solid var(--bad); }
+  button.big.plain { background:#fff; color:var(--main); border:1px solid var(--main); }
+  a.big { display:block; text-align:center; text-decoration:none; padding:14px; border:1px solid var(--main); border-radius:10px; margin-bottom:10px; background:#fff; }
+  .tag { display:inline-block; padding:3px 10px; border-radius:20px; font-size:13px; background:#e8ecf5; color:var(--main); }
+  .tag.ok { background:var(--okbg); color:var(--ok); }
+  .tag.warn { background:var(--warnbg); color:var(--warn); }
+  .tag.bad { background:var(--badbg); color:var(--bad); }
+  .order { cursor:pointer; }
+  .order h3 { margin:0 0 6px; font-size:17px; }
+  .order p { margin:3px 0; color:var(--mut); font-size:14px; }
+  .top { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .step { display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); }
+  .step:last-child { border-bottom:0; }
+  .dot { width:26px; height:26px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; font-size:13px; background:#e8ecf5; color:var(--mut); }
+  .step.done .dot { background:var(--ok); color:#fff; }
+  .step.now .dot { background:var(--main); color:#fff; }
+  .step.now { font-weight:bold; }
+  .msg { padding:12px; border-radius:10px; margin-bottom:12px; background:var(--badbg); color:var(--bad); }
+  .msg.info { background:var(--warnbg); color:var(--warn); }
+  .hint { color:var(--mut); font-size:14px; margin:0 0 10px; }
+  h2 { font-size:16px; margin:0 0 10px; }
+  .logrow { padding:9px 0; border-bottom:1px solid var(--line); font-size:14px; }
+  .logrow:last-child { border-bottom:0; }
+  .logrow b { display:block; font-size:15px; }
+  .logrow small { color:var(--mut); }
+  #busy { position:fixed; inset:0; background:rgba(255,255,255,.75); display:none; align-items:center; justify-content:center; z-index:20; font-size:18px; color:var(--main); }
+  .dl { border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:10px; }
+  .dl .top b { font-size:15px; }
+  .dl .row { font-size:14px; padding:3px 0; }
+  .dl.done { background:var(--okbg); border-color:#bfe3cb; }
+  .dl.bad { background:var(--badbg); border-color:#f3c2bd; }
+  .ph { display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid var(--line); font-size:14px; }
+  .ph span { flex:1; }
+  .ph button { border:1px solid var(--line); background:#fff; border-radius:8px; padding:8px 12px; font-family:inherit; font-size:14px; }
+  .ph button.del { color:var(--bad); border-color:var(--bad); }
+  #viewer { position:fixed; inset:0; background:rgba(0,0,0,.85); display:none; align-items:center; justify-content:center; z-index:30; padding:16px; }
+  #viewer img { max-width:100%; max-height:100%; border-radius:8px; }
+  .datebar { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .datebar button { background:#fff; border:1px solid var(--line); border-radius:10px; padding:10px 14px; font-size:18px; color:var(--main); }
+  .datebar input { margin:0; text-align:center; flex:1; }
+  .chips { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+  .chips button { background:#fff; border:1px solid var(--line); border-radius:20px; padding:7px 14px; font-family:inherit; font-size:14px; color:var(--main); }
+  .tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:10px; }
+  .tiles button { background:#fff; border:1px solid var(--line); border-radius:12px; padding:8px 4px; font-family:inherit; font-size:13px; color:#555; }
+  .tiles button b { display:block; font-size:22px; color:var(--main); }
+  .tiles button.on { outline:3px solid var(--main); }
+  .tiles .t-fin b { color:#b26a00; } .tiles .t-closed b { color:var(--ok); } .tiles .t-issue b { color:var(--bad); } .tiles .t-run b { color:#1565c0; }
+  .filters { display:flex; gap:8px; margin-bottom:10px; } .filters select { flex:1; margin:0; }
+  .moneybar { background:#fff4e0; color:#8a5200; border-radius:10px; padding:10px; margin-bottom:10px; font-weight:bold; }
+  .latetag { display:inline-block; background:var(--badbg); color:var(--bad); border-radius:20px; padding:2px 8px; font-size:12px; margin-inline-start:6px; }
+  .card.order .lastline { color:#777; font-size:12px; }
+  .card.order.sel { outline:3px solid var(--main); }
+  .selbox { width:22px; height:22px; margin:0; margin-inline-end:8px; flex:none; }
+  .sum { background:#fff; border:2px solid var(--main); border-radius:14px; padding:14px; margin-bottom:12px; }
+  .sum h3 { margin:0 0 10px; font-size:16px; color:var(--main); }
+  .kv { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; text-align:center; }
+  .kv div { background:var(--bg); border-radius:10px; padding:8px 4px; font-size:12px; color:var(--mut); }
+  .kv b { display:block; font-size:18px; color:var(--ink); }
+  .mini { display:flex; justify-content:space-between; gap:8px; font-size:13px; padding:6px 0; border-top:1px dashed var(--line); }
+  .mini span:last-child { font-weight:bold; }
+  .st { margin-top:10px; padding:8px; border-radius:10px; text-align:center; font-weight:bold; font-size:14px; }
+  .st.wait { background:var(--warnbg); color:var(--warn); } .st.ok { background:var(--okbg); color:var(--ok); }
+  .cr { background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; }
+  .cr .top { display:flex; justify-content:space-between; align-items:center; }
+  .cr h4 { margin:0; font-size:16px; }
+  .cr .warnl { font-size:12px; color:var(--bad); margin-top:6px; }
+  .chips button.on { background:var(--main); color:#fff; border-color:var(--main); }
+  .empty { text-align:center; color:var(--mut); padding:30px 10px; }
+table.sub{width:100%;border-collapse:collapse;font-size:14px;margin:6px 0}
+table.sub th,table.sub td{border:1px solid #d6dbe4;padding:9px 4px;text-align:center}
+table.sub th{background:#1f3864;color:#fff;font-weight:600}
+table.sub td.pr{background:#fff;font-weight:700;cursor:pointer;color:#1f3864}
+table.sub td.pr.sel{background:#2e7d32;color:#fff}
+table.sub td.na{color:#aaa;font-size:12px;background:#f6f6f6}
+  #editor { position:fixed; inset:0; background:#111; z-index:40; display:flex; flex-direction:column; padding:12px; gap:8px; overflow:auto; }
+  #editor .ed-top { display:flex; justify-content:space-between; align-items:center; color:#fff; font-size:17px; }
+  #editor .ed-x { background:#333; color:#fff; border:0; border-radius:8px; width:40px; height:40px; font-size:18px; }
+  #editor .ed-img { flex:1; min-height:200px; display:flex; align-items:center; justify-content:center; }
+  #editor canvas { max-width:100%; max-height:55vh; border-radius:8px; background:#222; }
+  #editor .ed-bar { display:flex; gap:8px; }
+  #editor .ed-bar button { flex:1; background:#2b2f36; color:#fff; border:1px solid #444; border-radius:10px; padding:12px; font-size:16px; }
+  #editor input { font-size:17px; }
+  .ph { flex-wrap:wrap; }
+  .ph .ph-name { display:flex; flex-direction:column; flex:1; min-width:120px; }
+  .ph .ph-name small { color:#6b7280; }
+  .ph .ph-btns { display:flex; gap:6px; }
+  main.wide { max-width:1200px; }
+  .db-filters { display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:#fff; border:1px solid var(--line); border-radius:12px; padding:10px; margin-bottom:12px; position:relative; }
+  .db-filters select { width:auto; margin:0; padding:9px 10px; font-size:14px; }
+  .db-date { display:flex; align-items:center; gap:6px; border:1px solid var(--line); border-radius:10px; padding:9px 12px; font-size:14px; background:#fff; cursor:pointer; color:var(--ink); font-family:inherit; }
+  .db-chip { border:1px solid var(--line); background:#fff; border-radius:999px; padding:7px 12px; font-size:13px; cursor:pointer; font-family:inherit; color:var(--main); }
+  .db-chip.on { background:var(--main); color:#fff; border-color:var(--main); }
+  .db-cal { position:absolute; top:58px; right:10px; background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.15); padding:12px; width:310px; z-index:8; }
+  .db-cal .pre { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+  .db-cal .mh { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .db-cal .mh button { border:1px solid var(--line); background:#fff; border-radius:8px; width:34px; height:30px; font-size:16px; cursor:pointer; }
+  .db-cal table { width:100%; border-collapse:collapse; }
+  .db-cal th { font-size:11px; color:var(--mut); font-weight:normal; padding:3px 0; }
+  .db-cal td { text-align:center; font-size:13px; padding:6px 0; cursor:pointer; border-radius:6px; }
+  .db-cal td.e { cursor:default; }
+  .db-cal td.in { background:#dbe8fb; border-radius:0; }
+  .db-cal td.edge { background:var(--main); color:#fff; }
+  .db-cal td.tdy { outline:2px solid #f59e0b; outline-offset:-2px; }
+  .db-cal td.has::after { content:""; display:block; width:4px; height:4px; border-radius:50%; background:#2a78d6; margin:1px auto 0; }
+  .db-cal td.edge.has::after { background:#fff; }
+  .db-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:12px; }
+  .db-kpi { background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; }
+  .db-kpi .l { font-size:13px; color:var(--mut); display:flex; align-items:center; gap:6px; }
+  .db-kpi .v { font-size:26px; font-weight:700; margin-top:4px; color:#0b0b0b; }
+  .db-kpi .s { font-size:12px; color:#898781; margin-top:2px; }
+  .db-dot { width:9px; height:9px; border-radius:50%; display:inline-block; flex:none; }
+  .db-g2 { display:grid; grid-template-columns:1.6fr 1fr; gap:12px; }
+  .db-card h3 { margin:0 0 2px; font-size:15px; }
+  .db-card .sub { font-size:12px; color:#898781; margin-bottom:8px; }
+  .db-leg { display:flex; gap:14px; font-size:12px; color:#52514e; margin-bottom:6px; flex-wrap:wrap; }
+  .db-leg span { display:flex; align-items:center; gap:5px; }
+  .db-hbar { display:grid; grid-template-columns:118px 1fr 40px; align-items:center; gap:8px; font-size:13px; margin:7px 0; }
+  .db-hbar .t { height:14px; background:#eef1f6; border-radius:4px; overflow:hidden; display:flex; }
+  .db-hbar .t i { display:block; height:100%; }
+  .db-hbar .n { text-align:left; color:#52514e; }
+  .db-tbl { width:100%; border-collapse:collapse; font-size:13px; }
+  .db-tbl th { text-align:right; color:#52514e; font-weight:600; border-bottom:1px solid #e1e0d9; padding:8px 6px; white-space:nowrap; }
+  .db-tbl td { border-bottom:1px solid #f0f0ec; padding:8px 6px; white-space:nowrap; }
+  .db-tbl tr.click:hover td { background:#f5f8fd; cursor:pointer; }
+  .db-mini { height:6px; background:#eef1f6; border-radius:3px; width:60px; display:inline-block; vertical-align:middle; margin:0 6px; }
+  .db-mini i { display:block; height:100%; background:#0ca30c; border-radius:3px; }
+  .db-it { display:flex; justify-content:space-between; align-items:center; gap:8px; border-bottom:1px solid #f0f0ec; padding:9px 0; font-size:14px; }
+  .db-it small { color:#898781; display:block; font-size:12px; }
+  .db-it button { flex:none; }
+  .db-tip { position:fixed; pointer-events:none; background:#fff; border:1px solid var(--line); box-shadow:0 4px 14px rgba(0,0,0,.12); border-radius:8px; padding:8px 10px; font-size:12px; display:none; z-index:30; min-width:150px; }
+  .db-tip b { display:block; margin-bottom:4px; }
+  .db-tip div { display:flex; justify-content:space-between; gap:12px; }
+  .db-scroll { overflow-x:auto; }
+  .db-empty { color:#898781; font-size:14px; padding:12px 0; }
+  @media (max-width:820px) { .db-kpis { grid-template-columns:repeat(2,1fr); } .db-g2 { grid-template-columns:1fr; } .db-kpi .v { font-size:22px; } .db-hbar { grid-template-columns:96px 1fr 36px; } }
+
+  /* ===== الشكل الجديد: خط السير + الأختام ===== */
+  :root { --asphalt:#15203a; --road:#26324f; --yellow:#f5b700; --go:#13a35a; --stop:#e5484d; --blue2:#2f6bff;
+          --ink:#15203a; --mut:#6c7690; --line:#e3e7ee; --bg:#f4f6f9; --main:#15203a; --ok:#13a35a; --okbg:#e7f7ed; --bad:#e5484d; --badbg:#fdeaea; }
+  body { font-family:'Readex Pro', Tahoma, Arial, sans-serif; }
+  input, select, textarea, button { font-family:inherit; }
+  header { background:var(--asphalt); padding:14px 16px; }
+  header h1 { font-weight:600; font-size:18px; }
+  header button { border-radius:12px; }
+  main { padding:0 14px 24px; }
+  .card { border:0; border-radius:20px; box-shadow:0 2px 10px rgba(21,32,58,.06); }
+  input, select, textarea { border-radius:14px; border-color:var(--line); }
+  button.big, a.big { border-radius:16px; font-weight:600; }
+  button.big.ok { box-shadow:0 6px 16px rgba(19,163,90,.25); }
+  .tag { border-radius:8px; font-weight:500; font-size:12px; }
+  .msg { border-radius:16px; }
+  /* الشريط الغامق فوق القايمة */
+  .band { background:var(--asphalt); color:#fff; margin:0 -14px 14px; padding:4px 16px 0; border-radius:0 0 26px 26px; }
+  .daystrip { display:flex; position:relative; }
+  .daystrip:after { content:""; position:absolute; bottom:13px; left:0; right:0; border-top:2px dashed rgba(245,183,0,.55); }
+  .daystrip button { flex:1; background:none; border:0; color:#8d9cbc; font-size:12px; padding:6px 0 26px; position:relative; cursor:pointer; }
+  .daystrip button b { display:block; font-size:18px; font-weight:500; color:#c9d3e8; }
+  .daystrip button.on { color:var(--yellow); }
+  .daystrip button.on b { color:#fff; font-size:24px; font-weight:700; }
+  .daystrip button.on:after { content:""; position:absolute; bottom:7px; left:50%; margin-left:-7px; width:14px; height:14px; border-radius:50%; background:var(--yellow); box-shadow:0 0 0 5px rgba(245,183,0,.25); z-index:1; }
+  .calrow { padding:4px 0 12px; }
+  .calrow input.daypick { margin:0; background:#fff; color:var(--ink); text-align:center; font-size:17px; border:0; border-radius:14px; padding:11px; }
+  .tally { display:flex; justify-content:space-between; background:var(--road); margin:0 -16px; padding:11px 16px; font-size:13px; color:#c9d3e8; border-radius:0 0 26px 26px; }
+  .tally b { color:#fff; font-weight:600; }
+  .band + input[type=search] { margin-top:0; }
+  /* خط السير */
+  .stop { display:flex; gap:10px; }
+  .rail { width:26px; flex:none; display:flex; flex-direction:column; align-items:center; }
+  .rail .n { width:20px; height:20px; border-radius:50%; border:3px solid var(--line); background:#fff; margin-top:18px; z-index:1; flex:none; }
+  .rail .l { flex:1; width:3px; background:var(--line); margin-bottom:-12px; }
+  .stop:last-child .rail .l { display:none; }
+  .stop.done .n { background:var(--go); border-color:var(--go); } .stop.done .l { background:var(--go); }
+  .stop.now .n { width:26px; height:26px; border:6px solid var(--blue2); margin-top:16px; box-shadow:0 0 0 6px rgba(47,107,255,.15); }
+  .stop.bad .n { border-color:var(--stop); }
+  .stop > .card { flex:1; min-width:0; }
+  .stop.done > .card { background:#fbfcfd; box-shadow:none; border:1px solid var(--line); }
+  .stop.done > .card h3 { color:#7d869b; }
+  .stop.now > .card { box-shadow:0 10px 30px rgba(21,32,58,.13); }
+  .card.order { position:relative; }
+  .seg { display:flex; gap:4px; margin:10px 0 4px; } .seg i { flex:1; height:6px; border-radius:3px; background:var(--line); }
+  .seg i.d { background:var(--go); } .seg i.c { background:var(--blue2); }
+  .gobtn { display:flex; justify-content:space-between; align-items:center; background:var(--blue2); color:#fff; border-radius:16px; padding:13px 16px; margin-top:10px; font-weight:600; }
+  .gobtn span { font-size:13px; opacity:.85; font-weight:400; }
+  /* الختم */
+  .stamp { position:absolute; left:10px; top:40px; width:72px; height:72px; border:3px solid var(--go); border-radius:50%; color:var(--go); display:grid; place-items:center; text-align:center; font-weight:700; font-size:11.5px; line-height:1.25; transform:rotate(-14deg); opacity:.85; background:rgba(255,255,255,.55); pointer-events:none; }
+  .stamp:before { content:""; position:absolute; inset:4px; border:1.5px dashed currentColor; border-radius:50%; }
+  .stamp small { display:block; font-size:9.5px; font-weight:500; }
+  .stamp.red { border-color:var(--stop); color:var(--stop); }
+  .stamp.grey { border-color:#8a93a8; color:#6c7690; }
+  .card.order.stamped .top > div:last-child .tag { display:none; }
+  /* المشرف: كارت لكل مسؤول تسليم */
+  .cour { background:#fff; border-radius:18px; padding:12px 14px; margin-bottom:10px; box-shadow:0 2px 10px rgba(21,32,58,.06); cursor:pointer; }
+  .cour .h { display:flex; justify-content:space-between; align-items:center; gap:8px; font-weight:600; }
+  .cour .h small { color:var(--mut); font-weight:400; font-size:12px; text-align:left; }
+  .mrail { display:flex; align-items:center; margin-top:12px; }
+  .mrail i { width:14px; height:14px; border-radius:50%; border:2.5px solid var(--line); background:#fff; flex:none; }
+  .mrail em { flex:1; height:3px; background:var(--line); min-width:4px; }
+  .mrail i.d { background:var(--go); border-color:var(--go); } .mrail em.d { background:var(--go); }
+  .mrail i.c { width:20px; height:20px; border:5px solid var(--blue2); }
+  .mrail i.b { border-color:var(--stop); background:var(--stop); }
+  .cour .h b { font-size:16px; }
+  .badge { font-size:12px; font-weight:700; padding:4px 10px; border-radius:20px; white-space:nowrap; max-width:60%; overflow:hidden; text-overflow:ellipsis; }
+  .b-ok { background:#e7f7ed; color:var(--go); } .b-run { background:#e8efff; color:var(--blue2); } .b-bad { background:#fdeaea; color:var(--stop); } .b-new { background:#eef0f4; color:#5b6477; }
+  .csub { font-size:12.5px; color:var(--mut); margin-top:4px; }
+  .lrail { display:flex; align-items:flex-start; margin-top:12px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; }
+  .lrail .st { display:flex; flex-direction:column; align-items:center; width:64px; flex:none; text-align:center; cursor:pointer; }
+  .lrail .st i { width:22px; height:22px; border-radius:50%; border:3px solid var(--line); background:#fff; display:grid; place-items:center; font-style:normal; font-size:11px; font-weight:700; color:#fff; box-sizing:border-box; }
+  .lrail .st.d i { background:var(--go); border-color:var(--go); }
+  .lrail .st.c i { width:26px; height:26px; border:6px solid var(--blue2); margin-top:-2px; }
+  .lrail .st.b i { background:var(--stop); border-color:var(--stop); }
+  .lrail .st.n i { color:var(--mut); }
+  .lrail .st span { font-size:10.5px; color:var(--mut); margin-top:5px; line-height:1.3; max-width:62px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .lrail .st small { font-size:10px; font-weight:700; margin-top:1px; }
+  .lrail .st.d small { color:var(--go); } .lrail .st.c small { color:var(--blue2); } .lrail .st.b small { color:var(--stop); } .lrail .st.n small { color:var(--mut); }
+  .lrail .ln { flex:1; height:3px; background:var(--line); margin-top:10px; min-width:10px; } .lrail .ln.d { background:var(--go); }
+  .legend { display:flex; gap:12px; flex-wrap:wrap; font-size:12px; color:var(--mut); margin:0 4px 10px; }
+  .legend i { display:inline-block; width:12px; height:12px; border-radius:50%; vertical-align:-2px; margin-left:4px; border:2px solid var(--line); box-sizing:border-box; }
+  .legend i.d { background:var(--go); border-color:var(--go); } .legend i.c { border:4px solid var(--blue2); } .legend i.b { background:var(--stop); border-color:var(--stop); }
+  .cour .f { border-top:1px dashed var(--line); padding-top:8px; margin-top:10px; }
+  .homebtn { display:block; width:100%; background:var(--yellow); color:var(--asphalt); border:0; border-radius:14px; padding:11px; font-weight:700; font-size:15px; margin-bottom:12px; cursor:pointer; }
+  .cour .f { display:flex; justify-content:space-between; font-size:12px; color:var(--mut); margin-top:8px; }
+  .cour .f b { color:var(--ink); }
+  .tiles button { border:0; border-radius:16px; box-shadow:0 2px 10px rgba(21,32,58,.06); }
+  .tiles button.on { outline:2.5px solid var(--blue2); }
+  .tiles .t-run b { color:var(--blue2); } .tiles .t-issue b { color:var(--stop); } .tiles .t-closed b { color:var(--go); }
+  .sum { border:0; background:var(--asphalt); color:#fff; }
+  .sum h3 { color:#fff; } .sum .kv div { background:var(--road); color:#9fb0d0; } .sum .kv b { color:#fff; }
+  .sum .mini { border-top-color:rgba(255,255,255,.12); } .sum .hint { color:#9fb0d0; }
+  /* جوه الزيارة */
+  .vhero { background:var(--asphalt); color:#fff; margin:0 -14px 14px; padding:6px 18px 20px; border-radius:0 0 26px 26px; }
+  .vhero h2 { font-size:23px; font-weight:700; margin:0; }
+  .vhero p { margin:3px 0 0; color:#9fb0d0; font-size:13px; }
+  .vhero .acts { display:flex; gap:8px; margin-top:12px; }
+  .vhero .acts a { background:rgba(255,255,255,.14); color:#fff; padding:8px 12px; border-radius:12px; font-size:13px; text-decoration:none; font-weight:500; }
+  .stepnow small { color:var(--mut); font-size:13px; }
+  .stepnow .num { display:flex; align-items:baseline; gap:8px; margin:2px 0; }
+  .stepnow .num b { font-size:56px; line-height:1; font-weight:700; color:var(--blue2); }
+  .stepnow .num span { font-size:18px; color:#a3abbd; }
+  .stepnow h3 { margin:4px 0 10px; font-size:20px; font-weight:700; }
+  .step { border-bottom:1px dashed var(--line); }
+  .dot { width:28px; height:28px; background:#fff; border:2px solid var(--line); font-weight:600; }
+  .step.done { color:var(--mut); }
+  .step.done .dot { background:#fff; border-color:var(--go); color:var(--go); transform:rotate(-12deg); }
+  .step.now .dot { background:var(--blue2); border-color:var(--blue2); }
+</style>
+</head>
+<body>
+<header>
+  <button id="back" style="display:none">رجوع</button>
+  <h1 id="title">نظام التسليم</h1>
+  <button id="refresh" style="display:none">تحديث</button>
+  <button id="logout" style="display:none">خروج</button>
+</header>
+<main id="app"></main>
+<div id="busy">لحظة...</div>
+<div id="viewer" onclick="this.style.display='none'"><img alt=""></div>
+<div class="db-tip" id="dbtip"></div>
+
+<script>
+var S = { phone:'', pin:'', user:null, steps:[], visits:[], key:null, labels:{}, edit:[], sub:false };
+var ISSUES = ['العميل غير موجود','رفض الاستلام','تالف','صنف غير مطابق للإذن','عنوان خطأ','العميل ليس معه ختم','أخرى'];
+var ST_ISSUE = 'مشكلة', ST_CLOSED = 'مقفلة', ST_DONE = 'تم التسليم';
+var app = document.getElementById('app');
+
+/* ---------- أدوات ---------- */
+function el(tag, attrs, kids) {
+  var e = document.createElement(tag);
+  attrs = attrs || {};
+  Object.keys(attrs).forEach(function (k) {
+    if (k === 'text') e.textContent = attrs[k];
+    else if (k === 'onclick') e.onclick = attrs[k];
+    else if (k === 'cls') e.className = attrs[k];
+    else e.setAttribute(k, attrs[k]);
+  });
+  (kids || []).forEach(function (c) { if (c) e.appendChild(c); });
+  return e;
+}
+function busy(on, txt) {
+  var b = document.getElementById('busy');
+  b.textContent = txt || 'لحظة...';
+  b.style.display = on ? 'flex' : 'none';
+}
+function call(fn) {
+  var args = Array.prototype.slice.call(arguments, 1);
+  return new Promise(function (res, rej) {
+    var r = google.script.run.withSuccessHandler(res).withFailureHandler(function (e) {
+      rej(new Error((e && e.message) ? e.message.replace(/^Error:\s*/, '') : 'حصل خطأ'));
+    });
+    r[fn].apply(r, args);
+  });
+}
+function run(promise, txt) {
+  busy(true, txt);
+  return promise.then(function (v) { busy(false); return v; },
+                      function (e) { busy(false); alert(e.message); throw e; });
+}
+function getPos() {
+  return new Promise(function (res, rej) {
+    if (!navigator.geolocation) return rej(new Error('الموبايل لا يدعم تحديد الموقع'));
+    navigator.geolocation.getCurrentPosition(
+      function (p) { res({ lat: p.coords.latitude, lng: p.coords.longitude }); },
+      function () { rej(new Error('تعذر تحديد الموقع. افتح الـGPS واسمح للمتصفح باستخدام الموقع')); },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 });
+  });
+}
+// تصغير الصورة قبل الرفع
+function readPhoto(file) {
+  return new Promise(function (res, rej) {
+    if (!file) return res('');
+    var img = new Image();
+    var url = URL.createObjectURL(file);
+    img.onload = function () {
+      var max = 1280, w = img.width, h = img.height;
+      if (w > max || h > max) { var k = Math.min(max / w, max / h); w = Math.round(w * k); h = Math.round(h * k); }
+      var c = document.createElement('canvas'); c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      res(c.toDataURL('image/jpeg', 0.7).split(',')[1]);
+    };
+    img.onerror = function () { rej(new Error('تعذر قراءة الصورة')); };
+    img.src = url;
+  });
+}
+// الشيت بيشيل الصفر اللي في أول الموبايل المصري
+function telOf(m) {
+  var d = String(m || '').replace(/\D/g, '');
+  if (/^1\d{9}$/.test(d)) d = '0' + d;
+  return d;
+}
+function mapOf(v) {
+  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent([v.address, v.area, v.gov].filter(Boolean).join(' '));
+}
+function tag(s) {
+  s = s || 'جديدة';
+  var cls = s === ST_DONE || s === ST_CLOSED || s === 'تم السداد والتسليم' ? 'ok' : s === ST_ISSUE ? 'bad' : (s === 'جاري' || s.indexOf('مرتجع') === 0) ? 'warn' : '';
+  return el('span', { cls: 'tag ' + cls, text: s });
+}
+function row(label, value, href) {
+  if (!value) return document.createTextNode('');
+  var v = href ? el('a', { href: href, text: value }) : el('span', { text: value });
+  return el('div', { cls: 'row' }, [el('span', { text: label }), v]);
+}
+function dName(d) { return d.label ? d.label : d.noId ? 'الطلبية (بدون رقم إذن)' : 'إذن ' + d.id; }
+function stepsOf(v) { return (v && S.flows[v.flow] ? S.flows[v.flow].steps : S.steps); }
+function isPending(d, v) { return d.status !== ST_ISSUE && d.status !== ST_CLOSED && d.step < stepsOf(v).length; }
+function countIdx(v) { var st = stepsOf(v); for (var i = 0; i < st.length; i++) if (st[i].kind === 'count') return i; return -1; }
+function current() {
+  var k = S.key;
+  return S.visits.filter(function (v) { return v.vk === k; })[0] || S.visits.filter(function (v) { return v.key === k || v.deliveries.some(function (d) { return d.id === k; }); })[0] || null;
+}
+function setHeader(title, back) {
+  document.getElementById('title').textContent = title;
+  document.getElementById('back').style.display = back ? '' : 'none';
+  app.classList.remove('wide'); S.dashOn = false; S.chatOn = false;
+  if (S.chatTimer) { clearInterval(S.chatTimer); S.chatTimer = null; }
+  document.getElementById('refresh').style.display = S.user ? '' : 'none';
+  document.getElementById('logout').style.display = S.user && !back ? '' : 'none';
+  setTimeout(navSync, 0);
+}
+function apply(d) {
+  S.user = d.user; S.steps = d.steps; S.visits = d.visits; S.labels = d.labels || {}; S.edit = d.edit || [];
+  S.places = d.places || []; S.warehouses = d.warehouses || [];
+  S.flows = d.flows || {}; S.noteReasons = d.noteReasons || []; S.company = d.company || '';
+  S.chatUnread = d.chatUnread || 0;
+  // إشعارات الموبايل: بنقول لصفحة الأبلكيشن (GitHub) إن فيه حد سجّل دخول، وهي بتبعت رقم الجهاز
+  if (!S.pushReady) { S.pushReady = true; try { window.top.postMessage({ nm: 'ready' }, '*'); } catch (e) {} }
+  S.oldCode = !d.today;
+  S.today = d.today || new Date().toISOString().slice(0, 10);
+  if (!S.day) S.day = S.today;
+}
+function save() { try { localStorage.setItem('dl_auth', JSON.stringify({ p: S.phone, k: S.pin })); } catch (e) {} }
+function forget() { try { localStorage.removeItem('dl_auth'); } catch (e) {} }
+function after(d) { apply(d); showVisit(); }
+
+/* ---------- الدخول ---------- */
+function showLogin() {
+  S.user = null; S.key = null;
+  setHeader('نظام التسليم', false);
+  app.innerHTML = '';
+  var ph = el('input', { type: 'tel', placeholder: 'رقم الموبايل', inputmode: 'numeric' });
+  var pin = el('input', { type: 'password', placeholder: 'الكود السري', inputmode: 'numeric' });
+  var go = el('button', { cls: 'big', text: 'دخول', onclick: function () { login(ph.value, pin.value); } });
+  app.appendChild(el('div', { cls: 'card' }, [el('h2', { text: 'تسجيل الدخول' }), ph, pin, go]));
+}
+function login(phone, pin) {
+  return run(call('getData', phone, pin), 'جاري الدخول...').then(function (d) {
+    S.phone = phone; S.pin = pin; save(); apply(d); showList();
+  });
+}
+function reload() {
+  if (S.dashOn) { S.dashSub = false; return Promise.resolve(showDashboard(S.dashF)); }
+  if (S.chatOn) { return Promise.resolve(showChat()); }
+  return run(call('getData', S.phone, S.pin), 'تحديث...').then(function (d) {
+    apply(d); S.key && current() ? showVisit() : showList();
+  });
+}
+
+/* ---------- قائمة الزيارات ---------- */
+var DAYS = ['الأحد', 'الاتنين', 'التلات', 'الأربع', 'الخميس', 'الجمعة', 'السبت'];
+function shiftDay(iso, n) {
+  var d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+function dayName(iso) {
+  if (iso === S.today) return 'النهارده';
+  if (iso === shiftDay(S.today, -1)) return 'امبارح';
+  if (iso === shiftDay(S.today, 1)) return 'بكره';
+  return DAYS[new Date(iso + 'T12:00:00Z').getUTCDay()];
+}
+function isOpen(v) { return v.status !== 'تم التسليم' && v.status !== 'مقفلة' && v.status !== 'تم السداد والتسليم'; }
+// ===== الرجوع: زرار رجوع في الرئيسية + زرار الرجوع بتاع الموبايل =====
+function listHome() { return S.day === S.today && !S.fStatus && !S.fCourier && !S.fType && !(S.q || '').trim() && !S.calOpen; }
+function goHome() { S.day = S.today; S.fStatus = ''; S.fCourier = ''; S.fType = ''; S.q = ''; S.calOpen = false; S.sel = {}; showList(); }
+function atHome() { var b = document.getElementById('back'); return !!S.user && !S.key && !S.dashOn && !S.chatOn && (!b || b.style.display === 'none') && listHome(); }
+var NAV = { pushed: false, busy: false };
+function navSync() {
+  if (NAV.busy || NAV.pushed || atHome()) return;
+  try {
+    if (window.google && google.script && google.script.history) google.script.history.push({ d: 1 }, {}, '');
+    else history.pushState({ d: 1 }, '');
+    NAV.pushed = true;
+  } catch (e) {}
+}
+function navBack() {
+  NAV.pushed = false; NAV.busy = true;
+  try {
+    var b = document.getElementById('back');
+    if (b && b.style.display !== 'none') b.onclick();
+    else if (!listHome()) goHome();
+  } finally { NAV.busy = false; }
+  setTimeout(navSync, 0);
+}
+try {
+  if (window.google && google.script && google.script.history) google.script.history.setChangeHandler(function () { navBack(); });
+  else window.addEventListener('popstate', function () { navBack(); });
+} catch (e) {}
+function hhmm(t) { var m = String(t || '').match(/(\d{1,2}):(\d{2})/); return m ? ('0' + m[1]).slice(-2) + ':' + m[2] : ''; }
+// الختم على الكارت: أخضر لما تتسلّم، أحمر للمشكلة، رمادي للمؤجلة
+function stampOf(v) {
+  var t = v.last ? hhmm(v.last.time) : '';
+  if (v.postponed) return el('div', { cls: 'stamp grey' }, [document.createTextNode('مؤجلة'), el('small', { text: 'رغبة العميل' })]);
+  if (v.status === 'مشكلة') return el('div', { cls: 'stamp red' }, [document.createTextNode('مشكلة'), el('small', { text: t })]);
+  if (v.retPending) return null;
+  if (v.status === 'تم التسليم' || v.status === 'مقفلة' || v.status === 'تم السداد والتسليم')
+    return el('div', { cls: 'stamp' }, [document.createTextNode(v.status === 'مقفلة' ? 'مقفولة' : 'تم التسليم'), el('small', { text: t })]);
+  return null;
+}
+function segOf(v) {
+  var n = stepsOf(v).length, s = Math.min(v.step, n), kids = [];
+  for (var i = 0; i < n; i++) kids.push(el('i', { cls: i < s ? 'd' : i === s ? 'c' : '' }));
+  return el('div', { cls: 'seg' }, kids);
+}
+
+function showList() {
+  S.key = null; S.sub = false;
+  var admin = S.user.role === 'admin';
+  setHeader((admin ? 'المشرف: ' : 'المسؤول تسليم: ') + S.user.name, false);
+  app.innerHTML = '';
+
+  // شريط الأيام (زي الطريق) + ملخص اليوم
+  var picker = el('input', { type: 'date' });
+  picker.value = S.day === 'all' ? '' : S.day;
+  picker.onchange = function () { if (picker.value) { S.day = picker.value; showList(); } };
+  var mid = S.day === 'all' ? S.today : S.day;
+  var dayBtn = function (iso) {
+    var lbl = iso === S.today ? 'النهارده' : iso === shiftDay(S.today, 1) ? 'بكره' : iso === shiftDay(S.today, -1) ? 'امبارح' : DAYS[new Date(iso + 'T12:00:00Z').getUTCDay()].replace(/^ال/, '');
+    return el('button', { cls: S.day === iso ? 'on' : '', onclick: function () { S.day = iso; showList(); } }, [document.createTextNode(lbl), el('b', { text: iso.slice(8) })]);
+  };
+  var strip = el('div', { cls: 'daystrip' }, [dayBtn(shiftDay(mid, -1)), dayBtn(mid), dayBtn(shiftDay(mid, 1)), dayBtn(shiftDay(mid, 2)),
+    el('button', { cls: S.day === 'all' ? 'on' : '', onclick: function () { S.day = 'all'; showList(); } }, [document.createTextNode('كل'), el('b', { text: '∞' })]),
+    el('button', { cls: S.calOpen ? 'on' : '', onclick: function () {
+      S.calOpen = !S.calOpen; showList();
+      if (S.calOpen) setTimeout(function () { var p = document.getElementById('daypick'); if (p) { p.focus(); try { p.showPicker(); } catch (e) {} } }, 50);
+    } }, [document.createTextNode('تاريخ'), el('b', { text: '📅' })])]);
+  // خانة التاريخ ظاهرة (الكالندر المخفي ما بيفتحش جوه جوجل سكريبت)
+  picker.id = 'daypick'; picker.className = 'daypick';
+  picker.onchange = function () { if (picker.value) { S.day = picker.value; S.calOpen = false; showList(); } };
+  var dayVs = S.day === 'all' ? S.visits : S.visits.filter(function (v) { return v.iso === S.day; });
+  var doneN = dayVs.filter(function (v) { return !isOpen(v); }).length;
+  var money = 0; dayVs.forEach(function (v) { if (v.collected && v.collected.amount != null) money += Number(v.collected.amount) || 0; });
+  var lastT = ''; dayVs.forEach(function (v) { var t = v.last && hhmm(v.last.time); if (t && t > lastT) lastT = t; });
+  app.appendChild(el('div', { cls: 'band' }, [strip, S.calOpen ? el('div', { cls: 'calrow' }, [picker]) : null, el('div', { cls: 'tally' }, [
+    el('span', {}, [document.createTextNode('اتسلّم '), el('b', { text: String(doneN) }), document.createTextNode(' من '), el('b', { text: String(dayVs.length) })]),
+    el('span', {}, [document.createTextNode('محصّل '), el('b', { text: fmtN(Math.round(money)) + ' ج' })]),
+    el('span', {}, [document.createTextNode('آخر خطوة '), el('b', { text: lastT || '-' })])])]));
+
+  // البحث: بكود العميل (للمشرف) أو اسم العميل أو رقم الدليفري، في كل الأيام
+  var search = el('input', { type: 'search', placeholder: admin ? 'بحث بكود العميل أو الاسم أو رقم الدليفري' : 'بحث باسم العميل أو رقم الدليفري' });
+  search.value = S.q || '';
+  search.oninput = function () { S.q = search.value; drawList(); };
+  app.appendChild(search);
+  if (!admin) app.appendChild(el('button', { cls: 'big plain', text: 'ملاحظات مسؤول التسليم (عامة على اليوم)', onclick: function () { noteForm(null); } }));
+  app.appendChild(el('button', { cls: 'chatbtn', onclick: function () { S.chatCourier = null; showChat(); } }, [
+    document.createTextNode(admin ? '💬 الشات مع مسؤولي التسليم' : '💬 الشات مع المشرف'),
+    S.chatUnread ? el('i', { text: S.chatUnread + (S.chatUnread === 1 ? ' رسالة جديدة' : ' رسايل جديدة') }) : null]));
+  if (admin) app.appendChild(el('button', { cls: 'big', text: '📊 الداش بورد', onclick: function () { showDashboard(); } }));
+  var holder = el('div', {}, []);
+  app.appendChild(holder);
+  drawList();
+  if (S.q) { search.focus(); search.setSelectionRange(S.q.length, S.q.length); }
+
+  function drawList() {
+  holder.innerHTML = '';
+  var app = holder;
+  if (!listHome()) app.appendChild(el('button', { cls: 'homebtn', text: '↩ رجوع للنهارده (من غير فلاتر)', onclick: function () { goHome(); } }));
+  navSync();
+  var q = (S.q || '').trim().toLowerCase();
+  var list;
+  if (q) {
+    list = S.visits.filter(function (v) {
+      return [v.code, v.customer].concat(v.deliveries.map(function (d) { return d.id; }))
+        .some(function (x) { return x && String(x).toLowerCase().indexOf(q) !== -1; });
+    });
+  } else {
+    list = S.day === 'all' ? S.visits.slice() : S.visits.filter(function (v) { return v.iso === S.day; });
+  }
+  // تنبيهات تشخيص: كود قديم، أو زيارات تاريخها مش مفهوم
+  if (S.oldCode) {
+    app.appendChild(el('div', { cls: 'msg', text: 'ملف Code.gs قديم ومش بيبعت التواريخ، فالكالندر مش هيشتغل. حدّث Code.gs واعمل New version.' }));
+  }
+  var noDate = S.visits.filter(function (v) { return !v.iso; });
+  if (!q && S.day !== 'all' && noDate.length) {
+    app.appendChild(el('div', { cls: 'msg info', text: 'فيه ' + noDate.length + ' زيارة تاريخ التسليم بتاعها فاضي أو مش مفهوم، فمش ظاهرة في الكالندر. دوس هنا تشوفها.',
+      onclick: function () { S.day = 'all'; showList(); } }));
+  }
+  // زيارات مفتوحة من أيام فاتت (أو مرتجع لسه ماتسلمش)
+  if (!q && S.day === S.today) {
+    var late = S.visits.filter(function (v) { return v.iso && v.iso < S.today && (isOpen(v) || v.retPending); });
+    if (late.length) {
+      app.appendChild(el('div', { cls: 'msg info', text: 'فيه ' + late.length + ' زيارة مفتوحة من أيام فاتت. دوس هنا تشوفها.',
+        onclick: function () { S.day = 'all'; showList(); } }));
+    }
+  }
+  if (!q && S.day !== 'all') appSettleCard(app, list, admin);
+  // ===== فلاتر المشرف: المربعات + المسؤول تسليم + نوع العمل =====
+  var catOf = function (v) {
+    if (v.status === 'مشكلة' || v.retPending) return 'issue';
+    if (v.status === 'مقفلة') return 'closed';
+    if (v.status === 'تم التسليم' || v.status === 'تم السداد والتسليم') return 'fin';
+    if (!v.status && !v.step) return 'new';
+    return 'run';
+  };
+  var lateH = function (v) { return v.last && v.last.hours != null ? v.last.hours : null; };
+  if (admin) {
+    var base = list;
+    var opts = function (items, all) { return [el('option', { value: '', text: all })].concat(items.map(function (x) { return el('option', { value: x[0], text: x[1] }); })); };
+    var cmap = {}, tmap = {};
+    S.visits.forEach(function (v) { if (v.courierName) cmap[v.courierName] = 1; tmap[v.wtype || 'تسليم'] = 1; });
+    var cs = el('select', {}, opts(Object.keys(cmap).sort().map(function (x) { return [x, x]; }), 'كل مسؤولي التسليم'));
+    var ts = el('select', {}, opts(Object.keys(tmap).sort().map(function (x) { return [x, x]; }), 'كل أنواع العمل'));
+    cs.value = S.fCourier || ''; ts.value = S.fType || '';
+    cs.onchange = function () { S.fCourier = cs.value; drawList(); };
+    ts.onchange = function () { S.fType = ts.value; drawList(); };
+    app.appendChild(el('div', { cls: 'filters' }, [cs, ts]));
+    base = base.filter(function (v) { return (!S.fCourier || v.courierName === S.fCourier) && (!S.fType || (v.wtype || 'تسليم') === S.fType); });
+    var cnt = { all: base.length, 'new': 0, run: 0, fin: 0, closed: 0, issue: 0 };
+    base.forEach(function (v) { cnt[catOf(v)]++; });
+    var tile = function (k, label) {
+      return el('button', { cls: 't-' + k + (S.fStatus === k || (!S.fStatus && k === 'all') ? ' on' : ''),
+        onclick: function () { S.fStatus = (S.fStatus === k || k === 'all') ? '' : k; S.sel = {}; drawList(); } }, [el('b', { text: String(cnt[k]) }), document.createTextNode(label)]);
+    };
+    app.appendChild(el('div', { cls: 'tiles' }, [tile('all', 'الكل'), tile('new', 'جديدة'), tile('run', 'جارية'),
+      tile('fin', 'مستنية المالية'), tile('closed', 'مقفولة'), tile('issue', 'مشاكل / مرتجع')]));
+    list = S.fStatus ? base.filter(function (v) { return catOf(v) === S.fStatus; }) : base;
+    // شريط الفلوس + القفل الجماعي
+    if (S.fStatus === 'fin') {
+      var sum = 0; list.forEach(function (v) { sum += (v.collected && Number(v.collected.amount)) || 0; });
+      app.appendChild(el('div', { cls: 'moneybar', text: 'مستنية المالية: ' + list.length + ' زيارة | محصّل: ' + fmtN(Math.round(sum * 100) / 100) + ' ج' }));
+      S.sel = S.sel || {};
+      var picked = list.filter(function (v) { return S.sel[v.vk]; });
+      app.appendChild(el('div', { cls: 'chips' }, [
+        el('button', { text: picked.length === list.length && list.length ? 'إلغاء التحديد' : 'تحديد الكل', onclick: function () {
+          var allOn = picked.length === list.length; S.sel = {}; if (!allOn) list.forEach(function (v) { S.sel[v.vk] = true; }); drawList(); } }),
+        el('button', { cls: picked.length ? 'on' : '', text: '✓ قفل المحدد (' + picked.length + ')', onclick: function () {
+          if (!picked.length) return alert('اختار الزيارات الأول');
+          if (!confirm('قفل ' + picked.length + ' زيارة مع الإدارة المالية؟')) return;
+          run(call('closeMany', S.phone, S.pin, picked.map(function (v) { return v.vk; })), 'بيقفل الزيارات...').then(function (d) {
+            apply(d); S.sel = {};
+            var b = d.bulk || { closed: 0, skipped: [] };
+            alert('اتقفل ' + b.closed + ' زيارة' + (b.skipped.length ? '\nماتقفلش: ' + b.skipped.join('، ') : ''));
+            showList();
+          }).catch(function () {});
+        } })
+      ]));
+    }
+  }
+  if (admin && !q && S.day !== 'all' && !S.fStatus && !S.fCourier) courierRails(app, list);
+  var title = q ? 'نتيجة البحث' : S.day === 'all' ? 'كل الزيارات' : dayName(S.day) + ' ' + S.day.split('-').reverse().join('/');
+  var openN = list.filter(isOpen).length;
+  app.appendChild(el('h2', { text: title + ' - ' + list.length + ' زيارة' + (list.length ? ' (' + openN + ' مفتوحة)' : '') }));
+
+  if (!list.length) { app.appendChild(el('div', { cls: 'empty', text: q ? 'مفيش نتيجة' : 'لا توجد زيارات في اليوم ده' })); return; }
+  var rank = { 'مشكلة': 0, 'جاري': 1, '': 2, 'تم التسليم': 3, 'مقفلة': 4 };
+  var r = function (v) { return v.retPending ? 0 : (rank[v.status] === undefined ? 2 : rank[v.status]); };
+  if (admin) {
+    // المشاكل فوق، بعدها المالية الأقدم، بعدها الباقي
+    var ar = function (v) { var c = catOf(v); return c === 'issue' ? 0 : c === 'fin' ? 1 : c === 'run' ? 2 : c === 'new' ? 3 : 4; };
+    list.sort(function (a, b) { return ar(a) - ar(b) || (ar(a) === 1 ? (lateH(b) || 0) - (lateH(a) || 0) : 0) || String(a.iso).localeCompare(String(b.iso)); });
+  } else list.sort(function (a, b) { return r(a) - r(b) || String(a.iso).localeCompare(String(b.iso)); });
+  // المسؤول تسليم في يوم واحد: خط السير بالترتيب (اللي خلص، الحالية، الجاية، المشاكل)
+  var route = !admin && !q && S.day !== 'all';
+  var nowVk = null;
+  if (route) {
+    var rr = function (v) { return !isOpen(v) ? 0 : (v.status === 'مشكلة' || v.retPending) ? 3 : v.status === 'جاري' ? 1 : 2; };
+    var tm = function (v) { return v.last ? String(v.last.time) : ''; };
+    list.sort(function (a, b) { return rr(a) - rr(b) || (rr(a) === 0 ? tm(a).localeCompare(tm(b)) : 0); });
+    var nv = list.filter(function (v) { return rr(v) === 1; })[0] || list.filter(function (v) { return rr(v) === 2; })[0];
+    nowVk = nv ? nv.vk : null;
+  }
+  list.forEach(function (v) {
+    var n = v.deliveries.length;
+    var selMode = admin && S.fStatus === 'fin';
+    var lh = lateH(v), isLate = admin && catOf(v) === 'fin' && lh != null && lh > 48;
+    var box = selMode ? el('input', { type: 'checkbox', cls: 'selbox' }) : null;
+    if (box) { box.checked = !!S.sel[v.vk]; box.onclick = function (e) { e.stopPropagation(); if (box.checked) S.sel[v.vk] = true; else delete S.sel[v.vk]; drawList(); }; }
+    var stp = stampOf(v);
+    var card = el('div', { cls: 'card order' + (box && box.checked ? ' sel' : '') + (stp ? ' stamped' : ''), onclick: function () { S.key = v.vk; showVisit(); } }, [
+      el('div', { cls: 'top' }, [el('div', { style: 'display:flex;align-items:center' }, [box, el('h3', { text: v.customer || v.key })]),
+        el('div', {}, [tag(v.status), isLate ? el('span', { cls: 'latetag', text: '⏱ من ' + (lh >= 48 ? Math.floor(lh / 24) + ' أيام' : lh + ' ساعة') }) : null])]),
+      el('p', { text: [v.code ? 'كود ' + v.code : '', v.area, v.gov].filter(Boolean).join(' - ') }),
+      el('p', { text: (n === 1 ? 'إذن واحد' : n + ' أذون') + (v.total ? ' - ' + (S.labels.pieces || 'العدد') + ': ' + v.total : '') + (v.date ? ' - ' + v.date : '') }),
+      admin ? el('p', { text: 'المسؤول تسليم: ' + v.courierName }) : null,
+      el('p', { text: (v.flow && v.flow !== 'delivery' ? v.wtype + ' - ' : '') + 'الخطوات: ' + Math.min(v.step, stepsOf(v).length) + ' من ' + stepsOf(v).length }),
+      v.mobile && v.status !== 'مقفلة' ? el('div', { style: 'margin-top:6px' }, [waIcon(v.mobile, v)]) : null,
+      v.postHist && v.postHist.length ? el('div', { cls: 'postline', text: '⏸ اتأجلت بناءً على رغبة العميل - ' + postDay(v.postHist[v.postHist.length - 1].time) + (v.postponed ? '' : ' · ↩ اتفتحت تاني') }) : null,
+      v.typeWarn ? el('div', { cls: 'typewarn', text: '⚠ نوع العمل "' + v.typeWarn + '" مش مفهوم، فاتعامل كتسليم ثقافي. صلّحه في Orders.' }) : null,
+      admin && v.last ? el('p', { cls: 'lastline', text: 'آخر خطوة: ' + v.last.step + (v.last.time ? ' - ' + v.last.time : '') }) : null,
+      admin && v.collected && v.collected.amount != null ? el('p', { cls: 'lastline', text: 'محصّل: ' + fmtN(v.collected.amount) + ' ج' }) : null
+    ]);
+    if (stp) card.appendChild(stp);
+    if (isOpen(v) && !stp) card.insertBefore(segOf(v), card.children[1]);
+    if (!route) { app.appendChild(card); return; }
+    // المسؤول تسليم: الزيارات على خط السير، والزيارة الحالية مفتوحة وعليها "كمّل الزيارة"
+    var st = !isOpen(v) ? 'done' : (v.status === 'مشكلة' || v.retPending) ? 'bad' : v.vk === nowVk ? 'now' : '';
+    if (st === 'now') {
+      var sx = stepsOf(v)[Math.min(v.step, stepsOf(v).length - 1)];
+      card.appendChild(el('div', { cls: 'gobtn' }, [document.createTextNode('كمّل الزيارة'), el('span', { text: sx ? sx.title : '' })]));
+    }
+    app.appendChild(el('div', { cls: 'stop ' + st }, [el('div', { cls: 'rail' }, [el('i', { cls: 'n' }), el('i', { cls: 'l' })]), card]));
+  });
+  }
+}
+
+/* ---------- المشرف: خط السير المصغّر لكل مسؤول تسليم ---------- */
+function courierRails(app, list) {
+  var by = {}, order = [];
+  list.forEach(function (v) { var k = v.courierName || '-'; if (!by[k]) { by[k] = []; order.push(k); } by[k].push(v); });
+  if (!order.length) return;
+  var cat = function (v) { return !isOpen(v) ? 0 : (v.status === 'مشكلة' || v.retPending) ? 1 : v.status === 'جاري' ? 2 : 3; };
+  var cards = order.map(function (k) {
+    var vs = by[k].slice();
+    vs.sort(function (a, b) { return cat(a) - cat(b) || String(a.last ? a.last.time : '').localeCompare(String(b.last ? b.last.time : '')); });
+    var done = vs.filter(function (v) { return cat(v) === 0; }).length;
+    var cur = vs.filter(function (v) { return cat(v) === 2; })[0];
+    var bad = vs.filter(function (v) { return cat(v) === 1; })[0];
+    // ترتيب مسؤولي التسليم: مشكلة، شغال، لسه ما بدأش، خلّص يومه
+    var rank = bad ? 0 : cur ? 1 : done === vs.length ? 3 : done ? 1 : 2;
+    var money = 0, lastT = '';
+    vs.forEach(function (v) { if (v.collected && v.collected.amount != null) money += Number(v.collected.amount) || 0;
+      var t = v.last && hhmm(v.last.time); if (t && t > lastT) lastT = t; });
+    var badge = bad ? el('span', { cls: 'badge b-bad', text: '⚠ مشكلة: ' + (bad.customer || '') })
+      : done === vs.length ? el('span', { cls: 'badge b-ok', text: '✓ خلّص يومه' })
+      : cur ? el('span', { cls: 'badge b-run', text: '● شغال: ' + (cur.customer || '') })
+      : done ? el('span', { cls: 'badge b-run', text: '● شغال' }) : el('span', { cls: 'badge b-new', text: 'لسه ما بدأش' });
+    var sub;
+    if (done === vs.length) sub = vs.length === 1 ? 'زيارة واحدة · اتسلمت' : vs.length + ' زيارات · كلها اتسلمت';
+    else if (bad) sub = done + ' من ' + vs.length + ' · ' + (bad.status === 'مشكلة' ? 'مشكلة - مستنية قرارك' : 'مرتجع ما اتسلمش للمخزن');
+    else if (cur) { var st = stepsOf(cur), sx = st[Math.min(cur.step, st.length - 1)]; sub = done + ' من ' + vs.length + ' · الخطوة ' + (Math.min(cur.step, st.length - 1) + 1) + ' من ' + st.length + (sx ? ': ' + sx.title : ''); }
+    else sub = done + ' من ' + vs.length;
+    var rail = el('div', { cls: 'lrail' }, []);
+    vs.forEach(function (v, i) {
+      var c = cat(v), cls = c === 0 ? 'd' : c === 1 ? 'b' : v === cur ? 'c' : 'n';
+      if (i) rail.appendChild(el('div', { cls: 'ln' + (c === 0 ? ' d' : '') }));
+      var lbl = c === 0 ? (v.last ? hhmm(v.last.time) : '✓') : c === 1 ? (v.status === 'مشكلة' ? 'مشكلة' : 'مرتجع') : v === cur ? 'دلوقتي' : 'لسه';
+      rail.appendChild(el('div', { cls: 'st ' + cls, title: v.customer || '', onclick: function (e) { e.stopPropagation(); S.key = v.vk; showVisit(); } }, [
+        el('i', { text: c === 0 ? '✓' : c === 1 ? '!' : v === cur ? '' : String(i + 1) }),
+        el('span', { text: v.customer || v.key }), el('small', { text: lbl })]));
+    });
+    return { rank: rank, node: el('div', { cls: 'cour', onclick: function () { S.fCourier = k; showList(); } }, [
+      el('div', { cls: 'h' }, [el('b', { text: k }), badge]), el('div', { cls: 'csub', text: sub }), rail,
+      el('div', { cls: 'f' }, [el('span', {}, [document.createTextNode('آخر خطوة '), el('b', { text: lastT || '-' })]),
+        el('span', {}, [document.createTextNode('محصّل '), el('b', { text: fmtN(Math.round(money)) + ' ج' })])])]) };
+  });
+  cards.sort(function (a, b) { return a.rank - b.rank; });
+  app.appendChild(el('div', { cls: 'legend' }, [
+    el('span', {}, [el('i', { cls: 'd' }), document.createTextNode('خلصت')]), el('span', {}, [el('i', { cls: 'c' }), document.createTextNode('شغال عليها')]),
+    el('span', {}, [el('i', { cls: 'b' }), document.createTextNode('مشكلة')]), el('span', {}, [el('i'), document.createTextNode('لسه')])]));
+  cards.forEach(function (c) { app.appendChild(c.node); });
+}
+
+window.addEventListener('message', function (e) {
+  var m = e.data || {};
+  if (m.nm === 'token' && m.token && S.phone) call('registerDevice', S.phone, S.pin, m.token, m.device || '').catch(function () {});
+  if (m.nm === 'push' && S.user) { if (S.chatOn) showChat(); else if (!S.key && !S.dashOn) call('getData', S.phone, S.pin).then(function (d) { apply(d); if (!S.key && !S.chatOn && !S.dashOn) showList(); }).catch(function () {}); }
+});
+
+/* ---------- الشات بين مسؤول التسليم والمشرف ---------- */
+function showChat() {
+  var admin = S.user.role === 'admin';
+  var thread = !admin || S.chatCourier;
+  setHeader(thread && admin ? (S.chatName || 'الشات') : '💬 الشات', true);
+  S.chatOn = true; S.key = null;
+  app.innerHTML = '';
+  var box = el('div', { cls: 'chatwrap' }, [el('div', { cls: 'empty', text: 'جاري التحميل...' })]);
+  app.appendChild(box);
+  var load = function (quiet) {
+    var p = call('getChat', S.phone, S.pin, admin ? (S.chatCourier || '') : '');
+    (quiet ? p : run(p, 'تحميل الشات...')).then(function (r) {
+      if (!S.chatOn) return;
+      if (thread) drawThread(box, r); else drawThreads(box, r);
+    }).catch(function () {});
+  };
+  load(false);
+  // الشات المفتوح بيتحدث لوحده كل 20 ثانية
+  S.chatTimer = setInterval(function () { if (S.chatOn && !document.hidden) load(true); }, 20000);
+}
+function drawThreads(box, r) {
+  box.innerHTML = '';
+  S.chatUnread = r.unread || 0;
+  if (!(r.threads || []).length) { box.appendChild(el('div', { cls: 'empty', text: 'مفيش مسؤولي تسليم في تاب Users' })); return; }
+  r.threads.forEach(function (t) {
+    box.appendChild(el('div', { cls: 'cthread', onclick: function () { S.chatCourier = t.courier; S.chatName = t.name; showChat(); } }, [
+      el('div', { cls: 'cav', text: (t.name || '؟').trim().charAt(0) }),
+      el('div', { cls: 'cm' }, [el('b', { text: t.name }),
+        el('p', { text: t.last ? (t.last.mine ? 'أنت: ' : '') + (t.last.visit ? '(' + t.last.visit + ') ' : '') + t.last.text : 'لسه مفيش رسايل' })]),
+      el('div', { cls: 'ctr' }, [document.createTextNode(t.last ? hhmm(t.last.at) : ''), t.unread ? el('i', { text: String(t.unread) }) : null])]));
+  });
+}
+function drawThread(box, r) {
+  var keepDraft = box.querySelector('textarea'), draft = keepDraft ? keepDraft.value : '';
+  var keepSel = box.querySelector('select'), selV = keepSel ? keepSel.value : '';
+  box.innerHTML = '';
+  S.chatName = r.name || S.chatName;
+  var list = el('div', { cls: 'cmsgs' }, []);
+  var lastDay = '';
+  (r.messages || []).forEach(function (m) {
+    var day = String(m.at).slice(0, 10);
+    if (day !== lastDay) { lastDay = day; list.appendChild(el('div', { cls: 'cday', text: day === S.today ? 'النهارده' : day.split('-').reverse().join('/') })); }
+    if (m.kind === 'event') { list.appendChild(el('div', { cls: 'csys', text: (m.visit ? m.visit + ': ' : '') + m.text + ' · ' + hhmm(m.at) })); return; }
+    var chip = m.visit ? el('span', { cls: 'cchip' + (m.kind === 'issue' ? ' bad' : ''), text: (m.kind === 'issue' ? '⚠ مشكلة · ' : '') + m.visit, onclick: function () {
+      var v = S.visits.filter(function (x) { return x.vk === m.vk; })[0];
+      if (v) { S.chatFromVisit = false; S.key = v.vk; showVisit(); }
+    } }) : null;
+    list.appendChild(el('div', { cls: 'cb ' + (m.mine ? 'me' : 'them') }, [chip,
+      el('div', { cls: 'ctext', text: m.text }),
+      el('small', { text: (m.mine ? '' : m.name + ' · ') + hhmm(m.at) + (m.mine ? (m.read ? ' ✓✓' : ' ✓') : '') })]));
+  });
+  if (!(r.messages || []).length) list.appendChild(el('div', { cls: 'empty', text: 'ابدأ المحادثة' }));
+  box.appendChild(list);
+  // ربط الرسالة بزيارة (اختياري)
+  var courier = r.courier;
+  var vs = S.visits.filter(function (v) { return S.user.role !== 'admin' || v.courier === courier; })
+    .sort(function (a, b) { return (b.iso === S.today) - (a.iso === S.today) || String(b.iso).localeCompare(String(a.iso)); }).slice(0, 40);
+  var sel = el('select', { cls: 'csel' }, [el('option', { value: '', text: '📎 من غير زيارة' })].concat(vs.map(function (v) {
+    return el('option', { value: v.vk, text: '📎 ' + (v.customer || v.key) + (v.iso ? ' - ' + v.iso.slice(8) + '/' + v.iso.slice(5, 7) : '') }); })));
+  sel.value = selV;
+  var ta = el('textarea', { rows: '2', placeholder: 'اكتب رسالة...' });
+  ta.value = draft;
+  var send = el('button', { cls: 'csend', text: '➤', onclick: function () {
+    var t = ta.value.trim();
+    if (!t) return ta.focus();
+    send.disabled = true;
+    call('sendChat', S.phone, S.pin, courier, t, sel.value).then(function (res) { ta.value = ''; sel.value = ''; drawThread(box, res); })
+      .catch(function (e) { alert(e.message); }).then(function () { send.disabled = false; });
+  } });
+  box.appendChild(el('div', { cls: 'ccomp' }, [sel, el('div', { cls: 'crow' }, [ta, send])]));
+  setTimeout(function () { list.scrollTop = list.scrollHeight; window.scrollTo(0, document.body.scrollHeight); }, 0);
+  S.chatUnread = S.user.role === 'admin' ? S.chatUnread : 0;
+}
+
+/* ---------- رد المشرف على المشكلة (كتابة بس) ---------- */
+function replyCard(v, admin) {
+  var hasIssue = v.status === 'مشكلة' || v.deliveries.some(function (d) { return d.status === ST_ISSUE; });
+  var reps = v.replies || [];
+  if (!reps.length && !(admin && hasIssue)) return;
+  var c = el('div', { cls: 'card replycard' }, [el('h2', { text: '💬 رد المشرف' })]);
+  reps.forEach(function (r) {
+    c.appendChild(el('div', { cls: 'rep' }, [el('div', { text: r.text }), el('small', { text: r.time + (r.by ? ' - ' + r.by : '') })]));
+  });
+  if (admin && hasIssue) {
+    var ta = el('textarea', { rows: '3', placeholder: 'اكتب ردك لمسؤول التسليم على المشكلة...' });
+    c.appendChild(ta);
+    c.appendChild(el('button', { cls: 'big', text: 'إرسال الرد', onclick: function () {
+      if (ta.value.trim().length < 2) { ta.focus(); return alert('اكتب الرد'); }
+      run(call('replyIssue', S.phone, S.pin, v.vk, ta.value), 'جاري الإرسال...').then(after).catch(function () {});
+    } }));
+  }
+  app.appendChild(c);
+}
+
+/* ---------- تاريخ التأجيل + إعادة الفتح (المشرف) ---------- */
+function postDay(t) { var m = String(t || '').match(/(\d{1,2})[\/-](\d{1,2})/); return m ? ('0' + m[1]).slice(-2) + '/' + ('0' + m[2]).slice(-2) : String(t || ''); }
+function postHistCard(v, admin) {
+  var c = el('div', { cls: 'card' }, [el('h2', { text: '⏸ تاريخ التأجيل' }),
+    el('p', { cls: 'hint', text: 'الزيارة دي كان ليها خط سير، واتأجلت بناءً على رغبة العميل.' })]);
+  v.postHist.forEach(function (h) {
+    var box = el('div', { cls: 'phist' }, [
+      el('b', { text: h.time + (h.by ? ' - ' + h.by : '') }),
+      h.note ? el('div', { text: h.note }) : null,
+      h.lat && h.lng ? el('a', { href: 'https://www.google.com/maps?q=' + h.lat + ',' + h.lng, target: '_blank', text: 'الموقع على الخريطة' }) : null,
+      h.reopen ? el('div', { cls: 'reo', text: '↩ اتفتحت تاني ' + h.reopen + ' بواسطة ' + (h.reopenBy || 'المشرف') }) : null]);
+    c.appendChild(box);
+  });
+  if (admin && v.postponed && (v.flow || 'delivery') === 'delivery') {
+    c.appendChild(el('button', { cls: 'big', text: '↩ إعادة فتح الزيارة', onclick: function () {
+      if (!confirm('الزيارة هترجع مفتوحة من الخطوة اللي وقفت عندها، والتاريخ زي ما هو. تكمّل؟')) return;
+      run(call('reopenPostponed', S.phone, S.pin, v.vk), 'جاري الفتح...').then(after).catch(function () {});
+    } }));
+  }
+  app.appendChild(c);
+}
+
+/* ---------- سداد عملاء الأبلكيشن اليومي ---------- */
+var APP_SETTLE_STEP = 'استلام سداد الأبلكيشن (يومي)';
+function appSum(vs) {
+  var s = { n: 0, value: 0, pending: 0, pendingN: 0, paid: 0, paidN: 0, open: 0, notes: [], paidAt: '' };
+  vs.forEach(function (v) {
+    if (v.flow !== 'app' || v.postponed) return;
+    var amt = v.collected && v.collected.amount != null ? Number(v.collected.amount) || 0 : 0;
+    s.n++; s.value += Number(v.value) || 0;
+    if (v.status === 'تم التسليم') { s.pending += amt; s.pendingN++; }
+    else if (v.status === 'مقفلة') { s.paid += amt; s.paidN++; if (v.last && v.last.step === APP_SETTLE_STEP) s.paidAt = v.last.time; }
+    else s.open++;
+    if (v.collected && v.value && Number(v.collected.amount) !== Number(v.value)) {
+      var why = String(v.collected.note || '').split('|').map(function (x) { return x.trim(); }).filter(function (x) { return /^تعديل/.test(x); })[0] || '';
+      s.notes.push((v.customer || '') + ': ' + fmtN(v.collected.amount) + ' بدل ' + fmtN(v.value) + (why ? ' - ' + why.replace(/^تعديل:\s*/, '') : ''));
+    }
+  });
+  return s;
+}
+function appSettleCard(app, dayList, admin) {
+  var apps = dayList.filter(function (v) { return v.flow === 'app' && !v.postponed; });
+  if (!apps.length) return;
+  var dayTxt = S.day === S.today ? 'النهارده' : S.day.split('-').reverse().join('/');
+  if (!admin) {
+    var s = appSum(apps);
+    var box = el('div', { cls: 'sum' }, [el('h3', { text: '💰 تحصيل عملاء الأبلكيشن - ' + dayTxt }),
+      el('div', { cls: 'kv' }, [el('div', {}, [el('b', { text: String(s.n) }), document.createTextNode('أوردر')]),
+        el('div', {}, [el('b', { text: fmtN(s.value) }), document.createTextNode('قيمة الأوردرات')]),
+        el('div', {}, [el('b', { text: fmtN(s.pending + s.paid) }), document.createTextNode(s.pendingN || !s.paidN ? 'المحصّل معاك' : 'اتورّد')])])]);
+    apps.forEach(function (v) {
+      var a = v.collected && v.collected.amount != null ? Number(v.collected.amount) : null;
+      box.appendChild(el('div', { cls: 'mini' }, [el('span', { text: v.customer || v.key }),
+        el('span', { text: a == null ? 'لسه' : (v.value && a !== Number(v.value) ? fmtN(v.value) + ' ← ' : '') + fmtN(a) + ' ج' })]));
+    });
+    if (s.pendingN) box.appendChild(el('div', { cls: 'st wait', text: '⏳ مستني المشرف يأكد استلام ' + fmtN(s.pending) + ' ج' }));
+    if (s.paidN) box.appendChild(el('div', { cls: 'st ok', text: '✓ المشرف استلم ' + fmtN(s.paid) + ' ج' + (s.paidAt ? ' - ' + s.paidAt : '') }));
+    if (s.open) box.appendChild(el('p', { cls: 'hint', text: 'فيه ' + s.open + ' أوردر لسه ما خلصش.' }));
+    app.appendChild(box);
+    return;
+  }
+  // المشرف: إجمالي اليوم + كارت لكل مسؤول تسليم
+  var T = appSum(apps);
+  var head = el('div', { cls: 'sum' }, [el('h3', { text: '💰 سداد عملاء الأبلكيشن - ' + S.day.split('-').reverse().join('/') }),
+    el('div', { cls: 'kv' }, [el('div', {}, [el('b', { text: String(T.n) }), document.createTextNode('أوردر')]),
+      el('div', {}, [el('b', { text: fmtN(T.value) }), document.createTextNode('قيمة الأوردرات')]),
+      el('div', {}, [el('b', { text: fmtN(T.pending + T.paid) }), document.createTextNode('المحصّل')])])]);
+  var diff = (T.pending + T.paid) - T.value;
+  if (diff && T.n && !T.open) head.appendChild(el('div', { cls: 'mini' }, [el('span', { text: 'فرق (تعديلات مسؤولي التسليم)' }), el('span', { style: 'color:var(--bad)', text: fmtN(diff) + ' ج' })]));
+  app.appendChild(head);
+  var by = {}, order = [];
+  apps.forEach(function (v) { var k = v.courier || v.courierName; if (!by[k]) { by[k] = []; order.push(k); } by[k].push(v); });
+  var settle = function (courier, txt) {
+    if (!confirm(txt)) return;
+    run(call('settleApp', S.phone, S.pin, S.day, courier), 'جاري التأكيد...').then(function (d) {
+      apply(d); alert('اتأكد استلام ' + fmtN(d.settle.amount) + ' ج (' + d.settle.visits + ' أوردر)'); showList();
+    }).catch(function () {});
+  };
+  var allPending = 0;
+  order.forEach(function (k) {
+    var vs = by[k], s = appSum(vs), name = vs[0].courierName;
+    allPending += s.pending;
+    var card = el('div', { cls: 'cr' }, [el('div', { cls: 'top' }, [el('h4', { text: name }),
+      s.pendingN ? el('span', { cls: 'tag warn', text: 'مستني التأكيد' }) : s.paidN ? el('span', { cls: 'tag ok', text: 'اتورّد ✓' }) : el('span', { cls: 'tag', text: 'لسه شغال' })]),
+      el('div', { cls: 'mini' }, [el('span', { text: s.n + ' أوردر · قيمتها ' + fmtN(s.value) }),
+        el('span', { text: s.pendingN ? 'محصّل ' + fmtN(s.pending) + ' ج' : s.paidN ? fmtN(s.paid) + ' ج' + (s.paidAt ? ' - ' + s.paidAt : '') : '-' })])]);
+    s.notes.forEach(function (n) { card.appendChild(el('div', { cls: 'warnl', text: '⚠ ' + n })); });
+    if (s.open) card.appendChild(el('div', { cls: 'warnl', text: '⚠ فيه ' + s.open + ' أوردر لسه مفتوح (مش داخل في المبلغ)' }));
+    if (s.pendingN) card.appendChild(el('button', { cls: 'big ok', style: 'margin-top:10px', text: '✓ استلمت ' + fmtN(s.pending) + ' ج من ' + name,
+      onclick: function () { settle(vs[0].courier, 'تأكيد استلام ' + fmtN(s.pending) + ' ج من ' + name + '؟ (' + s.pendingN + ' أوردر هيتقفلوا)'); } }));
+    app.appendChild(card);
+  });
+  if (order.length > 1 && allPending > 0) app.appendChild(el('button', { cls: 'big', text: '✓ تأكيد استلام الكل (' + fmtN(allPending) + ' ج)',
+    onclick: function () { settle('', 'تأكيد استلام ' + fmtN(allPending) + ' ج من كل مسؤولي التسليم؟'); } }));
+}
+
+/* ---------- الزيارة ---------- */
+function showVisit() {
+  var v = current();
+  if (!v) return showList();
+  S.key = v.vk; S.sub = false;
+  var admin = S.user.role === 'admin';
+  setHeader(v.customer || 'زيارة', true);
+  app.innerHTML = '';
+
+  if (v.dup && v.dup.length) app.appendChild(el('div', { cls: 'card', style: 'background:#fdecea;border-color:#e57373;color:#b71c1c' }, [el('b', { text: '⚠ رقم الإذن ' + v.dup.join('، ') + ' متكرر في خط السير في أكتر من سطر. لازم المشرف يغيّره في تاب Orders قبل ما تكمّل، عشان الصور والعدد ما يتلخبطوش.' })]));
+  if (v.typeWarn) app.appendChild(el('div', { cls: 'msg', text: '⚠ نوع العمل المكتوب في Orders "' + v.typeWarn + '" مش من القايمة، فالسيستم شغّال بخطوات التسليم الثقافي. لو دي زيارة أبلكيشن أو نوع تاني، اختار النوع الصح من القايمة في Orders واعمل تحديث.' }));
+  var heroActs = el('div', { cls: 'acts' }, []);
+  if (v.mobile && telOf(v.mobile).length >= 10) heroActs.appendChild(el('a', { href: '#', text: '📞 تواصل', onclick: function (e) { e.preventDefault(); contactSheet(v.mobile, v); } }));
+  heroActs.appendChild(el('a', { href: mapOf(v), target: '_blank', text: '📍 الخريطة' }));
+  app.appendChild(el('div', { cls: 'vhero' }, [el('h2', { text: v.customer || v.key }),
+    el('p', { text: [v.wtype || '', v.area, v.gov].filter(Boolean).join(' · ') }), heroActs]));
+  var heroAt = app.childNodes.length;
+  var info = el('div', { cls: 'card' }, [el('div', { cls: 'top' }, [el('h2', { text: 'بيانات العميل' }), tag(v.status)]),
+    v.flow && v.flow !== 'delivery' ? el('p', { cls: 'hint', text: 'نوع العمل: ' + v.wtype }) : null]);
+  v.fields.forEach(function (f) {
+    var href = null, val = f[1];
+    var isTel = f[0] === S.labels.mobile || /^محمول|^رقم التليفون|^رقم الموبيل|^موبايل/.test(f[0]);
+    if (isTel) { val = telOf(f[1]); href = 'tel:' + val; }
+    else if (f[0] === S.labels.address) href = mapOf(v);
+    var rw = row(f[0], val, href);
+    if (isTel && rw.lastChild) { var wi = waIcon(f[1], v); if (wi) rw.lastChild.after(wi); }
+    info.appendChild(rw);
+  });
+  if (admin) info.appendChild(row('المسؤول تسليم', v.courierName));
+  app.appendChild(info);
+
+  var dc = el('div', { cls: 'card' }, [el('h2', { text: 'الأذون (' + v.deliveries.length + ')' })]);
+  v.deliveries.forEach(function (d) {
+    var cls = d.status === ST_ISSUE ? 'bad' : (d.status === ST_DONE || d.status === ST_CLOSED) ? 'done' : '';
+    var box = el('div', { cls: 'dl ' + cls }, [el('div', { cls: 'top' }, [el('b', { text: d.label ? d.label : d.noId ? 'بدون رقم إذن' : 'Delivery ID: ' + d.id }), tag(d.status)])]);
+    d.fields.forEach(function (f) { box.appendChild(row(f[0], f[1])); });
+    if (admin) {
+      box.appendChild(row('حالة الطلبية', d.orderStatus));
+      box.appendChild(row('المالية', d.finance));
+      if (d.status === ST_DONE && !v.retPending && v.flow !== 'subscription' && v.flow !== 'app') {
+        box.appendChild(el('button', { cls: 'big ok', text: 'تم تسليم ' + dName(d) + ' للمالية', onclick: function () {
+          if (confirm('تأكيد تسليم ' + dName(d) + ' للمالية؟')) act(v, 'close', d.id);
+        } }));
+      }
+    }
+    dc.appendChild(box);
+  });
+  app.appendChild(dc);
+
+  var stepsCard = el('div', { cls: 'card' }, [el('h2', { text: 'الخطوات' })]);
+  stepsOf(v).forEach(function (s, i) {
+    var cls = i < v.step ? 'done' : (i === v.step ? 'now' : '');
+    stepsCard.appendChild(el('div', { cls: 'step ' + cls }, [
+      el('div', { cls: 'dot', text: i < v.step ? '✓' : String(i + 1) }), el('div', { text: s.title })
+    ]));
+  });
+  app.appendChild(stepsCard);
+
+  if (v.postHist && v.postHist.length) postHistCard(v, admin);
+  if (admin) { replyCard(v, admin); adminPanel(v); return; }
+  // المسؤول تسليم: رد المشرف والخطوة الحالية فوق على طول تحت اسم العميل
+  var before = app.childNodes.length;
+  replyCard(v, admin);
+  courierPanel(v);
+  var moved = Array.prototype.slice.call(app.childNodes, before);
+  var anchor = app.childNodes[heroAt] || null;
+  moved.forEach(function (n) { app.insertBefore(n, anchor); });
+}
+
+// ===== التصوير: كاميرا مباشرة + محرر (تدوير / اسم / إعادة تصوير) =====
+function openCamera(cb) {
+  var f = el('input', { type: 'file', accept: 'image/*', capture: 'environment', style: 'display:none' });
+  f.onchange = function () { var file = f.files && f.files[0]; f.remove(); if (file) cb(file); };
+  document.body.appendChild(f);
+  f.click();
+}
+function loadImg(src) {
+  return new Promise(function (res, rej) {
+    var img = new Image();
+    img.onload = function () { res(img); };
+    img.onerror = function () { rej(new Error('تعذر قراءة الصورة')); };
+    img.src = src;
+  });
+}
+// o = { title, name, src (لصورة مرفوعة) أو file (صورة جديدة), onSave(b64|null, name) }
+// b64 = null معناها الصورة نفسها ماتغيرتش (تعديل الاسم بس)
+function photoEditor(o) {
+  var st = { angle: 0, img: null, changed: !!o.file, url: null };
+  var ov = el('div', { id: 'editor' }, []);
+  var cv = el('canvas', {});
+  var nameIn = el('input', { type: 'text', placeholder: 'اسم الصورة', value: o.name || '' });
+  var close = function () { if (st.url) URL.revokeObjectURL(st.url); ov.remove(); };
+  var draw = function () {
+    if (!st.img) return;
+    var max = 1280, w = st.img.width, h = st.img.height;
+    if (w > max || h > max) { var k = Math.min(max / w, max / h); w = Math.round(w * k); h = Math.round(h * k); }
+    var rot = st.angle % 180 !== 0;
+    cv.width = rot ? h : w; cv.height = rot ? w : h;
+    var g = cv.getContext('2d');
+    g.translate(cv.width / 2, cv.height / 2); g.rotate(st.angle * Math.PI / 180);
+    g.drawImage(st.img, -w / 2, -h / 2, w, h);
+  };
+  var setFile = function (file) {
+    if (st.url) URL.revokeObjectURL(st.url);
+    st.url = URL.createObjectURL(file); st.angle = 0; st.changed = true;
+    return loadImg(st.url).then(function (img) { st.img = img; draw(); });
+  };
+  var go = o.file ? setFile(o.file) : loadImg(o.src).then(function (img) { st.img = img; draw(); });
+  go.catch(function (e) { alert(e.message); close(); });
+  ov.appendChild(el('div', { cls: 'ed-top' }, [el('b', { text: o.title || 'الصورة' }),
+    el('button', { cls: 'ed-x', text: '✕', onclick: close })]));
+  ov.appendChild(el('div', { cls: 'ed-img' }, [cv]));
+  ov.appendChild(el('div', { cls: 'ed-bar' }, [
+    el('button', { text: '↻ تدوير', onclick: function () { st.angle = (st.angle + 90) % 360; st.changed = true; draw(); } }),
+    el('button', { text: '📷 إعادة التصوير', onclick: function () { openCamera(function (f) { setFile(f); }); } })
+  ]));
+  ov.appendChild(el('p', { cls: 'hint', style: 'color:#ddd;margin:6px 0 2px', text: 'اسم الصورة' }));
+  ov.appendChild(nameIn);
+  ov.appendChild(el('button', { cls: 'big ok', text: o.file ? 'رفع الصورة' : 'حفظ التعديل', onclick: function () {
+    var nm = nameIn.value.trim();
+    if (!nm) { nameIn.focus(); return alert('اكتب اسم الصورة'); }
+    var b64 = st.changed ? cv.toDataURL('image/jpeg', 0.7).split(',')[1] : null;
+    close();
+    o.onSave(b64, nm);
+  } }));
+  document.body.appendChild(ov);
+}
+// زرار تصوير جديد: كاميرا ← المحرر ← رفع
+function cameraButton(v, kind, label, defName, deliveryId) {
+  return el('button', { cls: 'big plain', text: label, onclick: function () {
+    openCamera(function (file) {
+      photoEditor({ title: label.replace('+ ', ''), name: defName, file: file, onSave: function (b64, nm) {
+        var job = getPos().catch(function () { return {}; }).then(function (pos) {
+          return call('addPhoto', S.phone, S.pin, v.vk, kind, { photo: b64, name: nm, lat: pos.lat, lng: pos.lng, deliveryId: deliveryId || '' });
+        });
+        run(job, 'جاري رفع الصورة...').then(after).catch(function () {});
+      } });
+    });
+  } });
+}
+function photoList(v, kind, list) {
+  var wrap = el('div', {}, []);
+  (list || []).forEach(function (ph, i) {
+    var label = ph.name || ('صورة ' + (i + 1));
+    var view = function () { return call('viewPhoto', S.phone, S.pin, v.vk, kind, ph.row); };
+    wrap.appendChild(el('div', { cls: 'ph' }, [
+      el('div', { cls: 'ph-name' }, [el('b', { text: label }), el('small', { text: ph.time ? String(ph.time).slice(-8) : '' })]),
+      el('div', { cls: 'ph-btns' }, [
+        el('button', { text: 'عرض', onclick: function () {
+          run(view(), 'جاري فتح الصورة...').then(function (src) {
+            var vw = document.getElementById('viewer'); vw.querySelector('img').src = src; vw.style.display = 'flex';
+          }).catch(function () {});
+        } }),
+        el('button', { text: 'تعديل', onclick: function () {
+          run(view(), 'جاري فتح الصورة...').then(function (src) {
+            photoEditor({ title: 'تعديل ' + label, name: label, src: src, onSave: function (b64, nm) {
+              if (!b64 && nm === label) return;
+              var job = b64 ? call('replacePhoto', S.phone, S.pin, v.vk, kind, ph.row, b64, nm)
+                            : call('renamePhoto', S.phone, S.pin, v.vk, kind, ph.row, nm);
+              run(job, 'جاري الحفظ...').then(after).catch(function () {});
+            } });
+          }).catch(function () {});
+        } }),
+        el('button', { cls: 'del', text: 'مسح', onclick: function () {
+          if (!confirm('تمسح ' + label + '؟')) return;
+          run(call('deletePhoto', S.phone, S.pin, v.vk, kind, ph.row), 'جاري المسح...').then(after).catch(function () {});
+        } })
+      ])
+    ]));
+  });
+  return wrap;
+}
+function countForm(v, edit) {
+  var open = v.deliveries.filter(function (d) { return isPending(d, v); });
+  var ci = countIdx(v);
+  var st = stepsOf(v)[edit ? ci : v.step] || {};
+  var targets = edit ? open.filter(function (d) { return d.step > ci; }) : open.filter(function (d) { return d.step === v.step; });
+  var box = el('div', { cls: 'card' + (edit ? '' : ' stepnow') }, [edit ? el('h2', { text: 'تعديل العدد' }) : el('small', { text: 'الخطوة الحالية' }),
+    edit ? null : el('div', { cls: 'num' }, [el('b', { text: String(v.step + 1) }), el('span', { text: 'من ' + stepsOf(v).length })]),
+    edit ? null : el('h3', { text: st.title }),
+    el('p', { cls: 'hint', text: edit ? 'غيّر العدد اللي كان غلط بس. القديم هيفضل متسجل في السجل.' : 'اكتب ' + (st.label || 'العدد اللي راجعته فعليًا') + ' لكل إذن.' })]);
+  var ins = {};
+  targets.forEach(function (d) {
+    box.appendChild(el('p', { cls: 'hint', text: dName(d) }));
+    ins[d.id] = el('input', { type: 'number', inputmode: 'numeric', placeholder: st.label || 'العدد الفعلي' });
+    if (edit && d.count !== '') ins[d.id].value = d.count;
+    box.appendChild(ins[d.id]);
+  });
+  var comment = el('textarea', { rows: '2', placeholder: 'تعليق (اختياري)' });
+  box.appendChild(el('p', { cls: 'hint', text: 'تعليق' }));
+  box.appendChild(comment);
+  box.appendChild(el('button', { cls: 'big ok', text: edit ? 'حفظ التعديل' : 'تأكيد العدد', onclick: function () {
+    var counts = {};
+    for (var i = 0; i < targets.length; i++) {
+      var val = ins[targets[i].id].value;
+      if (val === '') return alert('اكتب العدد الفعلي لإذن ' + targets[i].id);
+      counts[targets[i].id] = val;
+    }
+    if (edit) run(call('editCount', S.phone, S.pin, v.vk, counts, comment.value.trim()), 'جاري الحفظ...').then(after).catch(function () {});
+    else stepCall(v, { counts: counts, comment: comment.value.trim() });
+  } }));
+  return box;
+}
+function editCountForm(v) {
+  S.sub = true;
+  setHeader('تعديل العدد', true);
+  app.innerHTML = '';
+  app.appendChild(countForm(v, true));
+}
+function stepCall(v, p, txt) {
+  run(call('completeStep', S.phone, S.pin, v.vk, v.step, p), txt || 'جاري التسجيل...').then(after).catch(function () {});
+}
+
+function returnPanel(v) {
+  var box = el('div', { cls: 'card' }, [
+    el('h2', { text: 'تسليم المرتجع للمخزن' }),
+    el('div', { cls: 'msg info', text: 'عدد المرتجع: ' + v.retQty + '. سلّمه للمخزن وارفع صورة ورقة الاستلام.' })
+  ]);
+  var wh = el('select', {}, [el('option', { value: '', text: 'اختار المخزن' })].concat(
+    S.warehouses.map(function (w) { return el('option', { value: w, text: w }); })));
+  box.appendChild(wh);
+  box.appendChild(el('p', { cls: 'hint', text: 'صور ورقة استلام المخزن المرفوعة: ' + (v.retPhotos || 0) }));
+  box.appendChild(photoList(v, 'ret', v.retPhotoList));
+  box.appendChild(cameraButton(v, 'ret', '+ تصوير ورقة استلام المخزن', 'ورقة استلام المخزن ' + ((v.retPhotoList || []).length + 1)));
+  box.appendChild(el('button', { cls: 'big ok', text: 'تم تسليم المرتجع للمخزن', onclick: function () {
+    if (!wh.value) return alert('اختار المخزن');
+    if (!v.retPhotos) return alert('ارفع صورة ورقة استلام المخزن الأول');
+    var job = getPos().then(function (pos) {
+      return call('completeReturn', S.phone, S.pin, v.vk, { warehouse: wh.value, lat: pos.lat, lng: pos.lng });
+    });
+    run(job, 'جاري التسجيل...').then(after).catch(function () {});
+  } }));
+  app.appendChild(box);
+}
+
+// واتساب للعميل في أي وقت (رسالة فاضية فيها التحية بس)
+function waNum(m) { var d = telOf(m); if (/^0/.test(d)) d = '2' + d; return d; }
+function waChat(m, v) {
+  var name = String(S.user.name || '').trim().split(/\s+/).slice(0, 2).join(' ');
+  var msg = 'السلام عليكم، معاك ' + name + ' من ' + (S.company || 'دار نهضة مصر للنشر') + ' بخصوص طلبية ' + ((v && v.customer) || '') + '.';
+  return 'https://wa.me/' + waNum(m) + '?text=' + encodeURIComponent(msg);
+}
+// زرار "تواصل": بيفتح اختيارين (اتصال أو واتساب) وكل تواصل بيتسجل في السجل
+function waIcon(m, v) {
+  if (!m || telOf(m).length < 10) return null;
+  return el('a', { cls: 'waic', href: '#', text: '📞 تواصل', onclick: function (e) {
+    e.preventDefault(); e.stopPropagation(); contactSheet(m, v);
+  } });
+}
+function contactSheet(m, v) {
+  var old = document.getElementById('csheet'); if (old) old.remove();
+  var close = function () { var x = document.getElementById('csheet'); if (x) x.remove(); };
+  var logIt = function (how) { if (v) call('logWhatsapp', S.phone, S.pin, v.vk, how).catch(function () {}); };
+  var back = el('div', { id: 'csheet', cls: 'csheet', onclick: function (e) { if (e.target === back) close(); } }, [
+    el('div', { cls: 'csbox' }, [
+      el('b', { text: 'تواصل مع ' + ((v && v.customer) || 'العميل') }),
+      el('p', { cls: 'hint', text: telOf(m) }),
+      el('a', { cls: 'big', href: 'tel:' + telOf(m), text: '📞 اتصال', onclick: function () { logIt('call'); setTimeout(close, 300); } }),
+      el('a', { cls: 'big wa', href: waChat(m, v), target: '_blank', text: '💬 واتساب', onclick: function () { logIt('wa'); setTimeout(close, 300); } }),
+      el('button', { cls: 'big plain', text: 'إلغاء', onclick: close })
+    ])
+  ]);
+  document.body.appendChild(back);
+}
+
+// رسالة واتساب للعميل اللي مردش
+function waLink(v) {
+  var d = telOf(v.mobile);
+  if (/^0/.test(d)) d = '2' + d;
+  var name = String(S.user.name || '').trim().split(/\s+/).slice(0, 2).join(' ');
+  var day = v.iso ? DAYS[new Date(v.iso + 'T12:00:00Z').getUTCDay()] : '';
+  var date = v.iso ? v.iso.split('-').reverse().join('/') : (v.date || '');
+  var msg = 'السلام عليكم،\n' +
+    'معاك ' + name + '، مسؤول تسليمات ' + (S.company || 'دار نهضة مصر للنشر') + '.\n' +
+    'حاولت التواصل مع حضرتك تليفونيًا بخصوص تسليم طلبية ' + (v.customer || '') + (day ? ' يوم ' + day : '') + (date ? ' الموافق ' + date : '') + '.\n' +
+    'في حالة وجود أي ملاحظات أو الرغبة في تعديل الميعاد، يرجى التواصل معنا على هذا الرقم.\n' +
+    'شكرًا لحضرتك.';
+  return 'https://wa.me/' + d + '?text=' + encodeURIComponent(msg);
+}
+
+function stepPhotoBox(v, s, list, deliveryId) {
+  var n = (list || []).length;
+  var dl = deliveryId ? v.deliveries.filter(function (d) { return d.id === deliveryId; })[0] : null;
+  return el('div', { cls: n ? 'dl done' : 'dl' }, [
+    el('div', { cls: 'top' }, [el('b', { text: dl ? dName(dl) : (s.photoName || 'الصور') }),
+      el('span', { cls: 'tag ' + (n ? 'ok' : ''), text: n + ' صورة' })]),
+    photoList(v, s.key, list),
+    cameraButton(v, s.key, '+ تصوير' + (dl ? ' ' + dName(dl) : ''),
+                 (dl ? (dl.noId ? (s.photoName || 'صورة') : 'إذن ' + dl.id) : (s.photoName || 'صورة')) + ' ' + (n + 1), deliveryId)
+  ]);
+}
+
+function gpsCall(v, p, txt) {
+  var job = getPos().then(function (pos) { p.lat = pos.lat; p.lng = pos.lng; return call('completeStep', S.phone, S.pin, v.vk, v.step, p); });
+  run(job, txt || 'جاري التسجيل...').then(after).catch(function () {});
+}
+
+function courierPanel(v) {
+  var issues = v.deliveries.filter(function (d) { return d.status === ST_ISSUE; });
+  var open = v.deliveries.filter(function (d) { return isPending(d, v); });
+  if (issues.length) {
+    app.appendChild(el('div', { cls: 'msg', text: 'أذون عليها مشكلة ومنتظرة قرار المشرف: ' + issues.map(dName).join('، ') }));
+  }
+  if (v.retPending) returnPanel(v);
+  if (!open.length) {
+    if (!v.retPending && v.deliveries.some(function (d) { return d.status === ST_DONE || d.status === ST_CLOSED; })) {
+      app.appendChild(el('div', { cls: 'msg info', text: v.flow === 'delivery' || !v.flow ? 'تم التسليم. سلّم الأذون المختومة للإدارة المالية.' : v.flow === 'subscription' ? 'تم السداد والتسليم. سلّم المبلغ للإدارة، والمشرف هيقفل الزيارة بعد ما يراجع السداد.' : 'الزيارة اتقفلت.' }));
+    }
+    if (!v.deliveries.every(function (d) { return d.status === ST_CLOSED; })) {
+      app.appendChild(el('button', { cls: 'big plain', text: 'ملاحظات مسؤول التسليم', onclick: function () { noteForm(v); } }));
+    }
+    return;
+  }
+  var steps = stepsOf(v);
+  var s = steps[v.step];
+  var targets = open.filter(function (d) { return d.step === v.step; });
+  var box = el('div', { cls: 'card stepnow' }, [el('small', { text: 'الخطوة الحالية' }),
+    el('div', { cls: 'num' }, [el('b', { text: String(v.step + 1) }), el('span', { text: 'من ' + steps.length })]),
+    el('h3', { text: s.title })]);
+  if (s.hint) box.appendChild(el('p', { cls: 'hint', text: s.hint }));
+
+  if (s.kind === 'confirm') {
+    box.appendChild(el('p', { cls: 'hint', text: 'اتصل بالعميل وأكد العنوان والبيانات والموعد.' }));
+    if (v.mobile) {
+      box.appendChild(el('a', { cls: 'big', href: 'tel:' + telOf(v.mobile), text: 'اتصال بالعميل' }));
+      box.appendChild(el('a', { cls: 'big wa', href: waLink(v), text: 'العميل مردش؟ ابعتله واتساب', onclick: function () {
+        call('logWhatsapp', S.phone, S.pin, v.vk).catch(function () {});
+      } }));
+    }
+    box.appendChild(el('button', { cls: 'big ok', text: 'تم التأكيد', onclick: function () { stepCall(v, {}); } }));
+    if (s.cs) box.appendChild(el('button', { cls: 'big plain', text: 'تم التأكيد عن طريق خدمة العملاء', onclick: function () {
+      if (confirm('العميل اتأكد معاه عن طريق خدمة العملاء؟ هتروح للخطوة اللي بعدها.')) stepCall(v, { via: 'cs' });
+    } }));
+
+  } else if (s.kind === 'place') {
+    box.appendChild(el('p', { cls: 'hint', text: 'اختار المكان. هيتسجل موقعك الحالي مع الوقت.' }));
+    var sel = el('select', {}, [el('option', { value: '', text: 'اختار المكان' })].concat(
+      (s.options || S.places).map(function (x) { return el('option', { value: x, text: x }); })));
+    var other = el('input', { type: 'text', placeholder: 'اكتب المكان', style: 'display:none' });
+    sel.onchange = function () { other.style.display = sel.value === 'أخرى' ? '' : 'none'; };
+    if (v.store && (s.options || S.places).indexOf(v.store) !== -1) sel.value = v.store;
+    if (s.key === 'warehouse' && v.store) box.appendChild(el('p', { cls: 'hint', text: 'المخزن: ' + v.store + ' — اللوكيشن ده هيتسجل تلقائي لكل طلبياتك النهارده من نفس المخزن.' }));
+    box.appendChild(sel); box.appendChild(other);
+    box.appendChild(el('button', { cls: 'big ok', text: 'تسجيل اللوكيشن', onclick: function () {
+      if (!sel.value) return alert('اختار المكان');
+      if (sel.value === 'أخرى' && !other.value.trim()) return alert('اكتب المكان');
+      gpsCall(v, { place: sel.value, placeOther: other.value.trim() });
+    } }));
+
+  } else if (s.kind === 'count') {
+    box = countForm(v, false);
+
+  } else if (s.kind === 'photos' && s.per === 'delivery') {
+    box.appendChild(el('p', { cls: 'hint', text: 'صوّر كل إذن لوحده بالكاميرا. بعد التصوير تقدر تدوّر الصورة وتكتب اسمها، وتعدّلها أو تعيد تصويرها بعد الرفع. لازم صورة على الأقل لكل إذن، وبعدين دوس "خلصت".' }));
+    var missing = [];
+    targets.forEach(function (d) {
+      if (!(d.photoList || []).length) missing.push(d.id);
+      box.appendChild(stepPhotoBox(v, s, d.photoList, d.id));
+    });
+    box.appendChild(el('button', { cls: 'big ok', text: 'خلصت رفع الصور', onclick: function () {
+      if (missing.length) return alert('لسه ناقص صور لإذن: ' + missing.join('، '));
+      stepCall(v, {});
+    } }));
+
+  } else if (s.kind === 'mailwh') {
+    if (v.reviewed) box.appendChild(el('div', { cls: 'msg info', text: '✔ المشكلة تم مراجعتها من المشرف. كمّل الإجراء، والإيميل هيروح للمشرف.' }));
+    var mlist = (v.stepPhotos || {})[s.key] || [];
+    S.mailDraft = S.mailDraft || {};
+    var md = S.mailDraft[v.vk] = S.mailDraft[v.vk] || {};
+    var mq = el('input', { type: 'number', inputmode: 'numeric', placeholder: 'الكمية المستلمة' });
+    var mi = el('textarea', { rows: '3', placeholder: 'الأصناف (مثلًا: ورق A4 - 200 رزمة، كرتون - 50)' });
+    if (md.qty) mq.value = md.qty; if (md.items) mi.value = md.items;
+    mq.oninput = function () { md.qty = mq.value; }; mi.oninput = function () { md.items = mi.value; };
+    box.appendChild(el('p', { cls: 'hint', text: 'الكمية المستلمة' })); box.appendChild(mq);
+    box.appendChild(el('p', { cls: 'hint', text: 'الأصناف' })); box.appendChild(mi);
+    box.appendChild(el('p', { cls: 'hint', text: 'صورة إذن المورد' }));
+    box.appendChild(stepPhotoBox(v, s, mlist));
+    box.appendChild(el('button', { cls: 'big ok', text: v.reviewed ? 'إرسال الإيميل للمشرف' : 'إرسال الإيميل للمخازن', onclick: function () {
+      if (!(Number(mq.value) > 0)) return alert('اكتب الكمية المستلمة');
+      if (mi.value.trim().length < 2) return alert('اكتب الأصناف');
+      if (!mlist.length) return alert('ارفع صورة الإذن');
+      stepCall(v, { qty: mq.value, items: mi.value.trim() });
+    } }));
+
+  } else if (s.kind === 'photos') {
+    var list = (v.stepPhotos || {})[s.key] || [];
+    box.appendChild(stepPhotoBox(v, s, list));
+    box.appendChild(el('button', { cls: 'big ok', text: s.kind === 'mailwh' ? 'إرسال الإيميل للمخازن' : 'خلصت رفع الصور', onclick: function () {
+      if (!list.length) return alert('ارفع صورة واحدة على الأقل');
+      stepCall(v, {});
+    } }));
+
+  } else if (s.kind === 'outcome') {
+    box.appendChild(el('p', { cls: 'hint', text: 'الكمية اتسلمت كلها، ولا فيه مرتجع؟' }));
+    var qty = el('input', { type: 'number', inputmode: 'numeric', placeholder: 'عدد المرتجع', style: 'display:none' });
+    var full = el('button', { cls: 'big ok', text: 'تم تسليم الكمية بالكامل', onclick: function () {
+      if (confirm('متأكد إن الكمية كلها اتسلمت؟')) stepCall(v, { outcome: 'full' });
+    } });
+    var retBtn = el('button', { cls: 'big plain', text: 'يوجد مرتجع', onclick: function () {
+      if (qty.style.display === 'none') { qty.style.display = ''; retBtn.textContent = 'تأكيد المرتجع'; qty.focus(); return; }
+      if (!(Number(qty.value) > 0)) return alert('اكتب عدد المرتجع');
+      stepCall(v, { outcome: 'return', returnQty: qty.value });
+    } });
+    box.appendChild(full); box.appendChild(qty); box.appendChild(retBtn);
+
+  } else if (s.kind === 'choice') {
+    var ch = el('select', {}, [el('option', { value: '', text: 'اختار ' + s.title })].concat(
+      (s.options || []).map(function (x) { return el('option', { value: x, text: x }); })));
+    var tx = el('input', { type: 'text', placeholder: s.textLabel || 'التفاصيل', style: 'display:none' });
+    ch.onchange = function () { tx.style.display = (s.textFor || []).indexOf(ch.value) !== -1 ? '' : 'none'; };
+    box.appendChild(ch); box.appendChild(tx);
+    box.appendChild(el('button', { cls: 'big ok', text: 'تسجيل', onclick: function () {
+      if (!ch.value) return alert('اختار ' + s.title);
+      if ((s.textFor || []).indexOf(ch.value) !== -1 && !tx.value.trim()) return alert('اكتب ' + (s.textLabel || 'التفاصيل'));
+      getPos().catch(function () { return {}; }).then(function (pos) {
+        stepCall(v, { choice: ch.value, text: tx.value.trim(), lat: pos.lat, lng: pos.lng });
+      });
+    } }));
+
+  } else if (s.kind === 'subscribe') {
+    S.subDraft = S.subDraft || {};
+    var dr = S.subDraft[v.vk] = S.subDraft[v.vk] || { sel: {} };
+    var tbl = el('table', { cls: 'sub' }, [el('tr', {}, [el('th', { text: 'المجلة' }), el('th', { text: 'الإصدار' })].concat(
+      s.terms.map(function (t) { return el('th', { text: t }); })))]);
+    var chosen = function () {
+      return s.prices.filter(function (it) { return dr.sel[it.mag]; }).map(function (it) {
+        var ti = s.terms.indexOf(dr.sel[it.mag]);
+        return { mag: it.mag, term: dr.sel[it.mag], price: it.price[ti] };
+      });
+    };
+    var total = function () { return chosen().reduce(function (a, x) { return a + x.price; }, 0); };
+    var amtIn = el('input', { type: 'number', inputmode: 'decimal', placeholder: 'المبلغ المحصل بالجنيه' });
+    var note = el('input', { type: 'text', placeholder: 'سبب الاختلاف (لو المبلغ مختلف عن الإجمالي)', style: 'display:none' });
+    var sumBox = el('div', { cls: 'msg info', style: 'display:none' });
+    var refresh = function (resetAmt) {
+      Array.prototype.forEach.call(tbl.querySelectorAll('td.pr'), function (td) {
+        td.className = 'pr' + (dr.sel[td.dataset.mag] === td.dataset.term ? ' sel' : '');
+      });
+      var ch = chosen(), tot = total();
+      if (ch.length) {
+        sumBox.style.display = ''; sumBox.innerHTML = '';
+        ch.forEach(function (x) { sumBox.appendChild(el('div', { text: '• ' + x.mag.replace('مجلة ', '') + ' - ' + x.term + ': ' + x.price + ' جنيه' })); });
+        sumBox.appendChild(el('b', { text: 'الإجمالي المطلوب: ' + tot + ' جنيه' }));
+        if (resetAmt) amtIn.value = tot;
+      } else { sumBox.style.display = 'none'; if (resetAmt) amtIn.value = ''; }
+      note.style.display = ch.length && amtIn.value && Number(amtIn.value) !== tot ? '' : 'none';
+      dr.amount = amtIn.value;
+    };
+    s.prices.forEach(function (it) {
+      tbl.appendChild(el('tr', {}, [el('td', { text: it.mag.replace('مجلة ', '') }), el('td', { text: it.edition })].concat(
+        it.price.map(function (p, i) {
+          if (p == null) return el('td', { cls: 'na', text: 'غير متاح' });
+          var td = el('td', { cls: 'pr', text: String(p), onclick: function () {
+            // نفس المجلة: نوع اشتراك واحد. الدوسة التانية على نفس الخانة بتلغيها
+            if (dr.sel[it.mag] === s.terms[i]) delete dr.sel[it.mag]; else dr.sel[it.mag] = s.terms[i];
+            refresh(true);
+          } });
+          td.dataset.mag = it.mag; td.dataset.term = s.terms[i];
+          return td;
+        }))));
+    });
+    box.appendChild(el('p', { cls: 'hint', text: 'دوس على سعر كل اشتراك العميل طلبه (ممكن أكتر من مجلة). دوسة تانية على نفس الخانة بتلغيها.' }));
+    box.appendChild(el('div', { style: 'overflow-x:auto' }, [tbl]));
+    box.appendChild(sumBox);
+    box.appendChild(el('p', { cls: 'hint', text: 'المبلغ المحصل' }));
+    if (dr.amount) amtIn.value = dr.amount;
+    amtIn.oninput = function () { refresh(false); };
+    box.appendChild(amtIn); box.appendChild(note);
+    box.appendChild(el('p', { cls: 'hint', text: 'صورة الإيصال اللي اتسلم للعميل (إجباري)' }));
+    var slist = (v.stepPhotos || {})[s.key] || [];
+    box.appendChild(stepPhotoBox(v, s, slist));
+    refresh(false);
+    box.appendChild(el('button', { cls: 'big ok', text: 'تم السداد والتسليم', onclick: function () {
+      var ch = chosen(), tot = total();
+      if (!ch.length) return alert('اختار الاشتراكات من الجدول');
+      if (!(Number(amtIn.value) > 0)) return alert('اكتب المبلغ المحصل');
+      if (Number(amtIn.value) !== tot && note.value.trim().length < 3) { note.focus(); return alert('المبلغ مختلف عن الإجمالي، اكتب السبب'); }
+      if (!slist.length) return alert('ارفع صورة الإيصال');
+      if (!confirm('تأكيد تحصيل ' + amtIn.value + ' جنيه عن:\n' + ch.map(function (x) { return x.mag + ' (' + x.term + ')'; }).join('\n'))) return;
+      getPos().catch(function () { return {}; }).then(function (pos) {
+        stepCall(v, { items: ch.map(function (x) { return { mag: x.mag, term: x.term }; }), amount: amtIn.value,
+                      comment: note.value.trim(), lat: pos.lat, lng: pos.lng });
+      });
+    } }));
+
+  } else if (s.kind === 'collect') {
+    box.appendChild(el('div', { cls: 'card', style: 'background:#f5f8ff;text-align:center;margin-bottom:10px' }, [
+      el('div', { cls: 'hint', style: 'margin:0', text: 'قيمة الأوردر' }),
+      el('div', { style: 'font-size:30px;font-weight:bold;color:var(--main)', text: v.value ? fmtN(v.value) + ' جنيه' : 'مش مكتوبة في خط السير' })]));
+    var eAmt = el('input', { type: 'number', inputmode: 'decimal', placeholder: 'المبلغ اللي حصّلته فعلًا' });
+    var eNote = el('textarea', { rows: '2', placeholder: 'ملاحظات: ليه المبلغ اتغير؟ (إجباري)' });
+    var eBox = el('div', { style: 'display:none' }, [el('p', { cls: 'hint', text: 'المبلغ المحصل' }), eAmt, eNote]);
+    var eBtn;
+    if (v.value) box.appendChild(el('button', { cls: 'big ok', text: 'تم التحصيل (' + fmtN(v.value) + ' جنيه)', onclick: function () {
+      if (confirm('تأكيد تحصيل ' + fmtN(v.value) + ' جنيه من العميل؟')) getPos().catch(function () { return {}; }).then(function (pos) {
+        stepCall(v, { mode: 'full', lat: pos.lat, lng: pos.lng });
+      });
+    } }));
+    box.appendChild(eBox);
+    eBtn = el('button', { cls: v.value ? 'big plain' : 'big ok', text: 'تعديل المبلغ', onclick: function () {
+      if (eBox.style.display === 'none') { eBox.style.display = ''; eBtn.textContent = 'تسجيل المبلغ المعدّل'; eAmt.focus(); return; }
+      if (eAmt.value === '' || Number(eAmt.value) < 0) return alert('اكتب المبلغ المحصل');
+      if (eNote.value.trim().length < 3) { eNote.focus(); return alert('اكتب سبب تعديل المبلغ'); }
+      if (confirm('تأكيد تحصيل ' + eAmt.value + ' جنيه بدل ' + fmtN(v.value) + '؟')) getPos().catch(function () { return {}; }).then(function (pos) {
+        stepCall(v, { mode: 'edit', amount: eAmt.value, comment: eNote.value.trim(), lat: pos.lat, lng: pos.lng });
+      });
+    } });
+    box.appendChild(eBtn);
+
+  } else if (s.kind === 'pdeliver') {
+    // شاشة واحدة: نوع الدورية والمجلات وعدد كل مجلة وطريقة الاستلام
+    var labels = v.deliveries.map(function (d) { return d.label; }).filter(Boolean);
+    var hintTxt = String(v.deliveries.map(function (d) { return (d.fields || []).map(function (f) { return f[1]; }).join(' '); }).join(' ') + ' ' +
+                         (v.fields || []).map(function (f) { return f[1]; }).join(' '));
+    var isPre = function (m) { return labels.length ? labels.indexOf(m) !== -1 : hintTxt.indexOf(m.replace('مجلة ', '')) !== -1; };
+    var reqOf = function (m) {
+      var d = v.deliveries.filter(function (x) { return x.label === m; })[0] || (v.deliveries.length === 1 ? v.deliveries[0] : null);
+      if (!d) return '';
+      var f = (d.fields || []).filter(function (x) { return x[0] === 'عدد الكتب'; })[0];
+      return d.pieces || (f ? f[1] : '');
+    };
+    var per = el('select', {}, [el('option', { value: '', text: 'نوع الدورية' })].concat(
+      Object.keys(s.periods || {}).map(function (x) { return el('option', { value: x, text: x }); })));
+    var magBox = el('div', {}, []);
+    var rowsM = [];
+    per.onchange = function () {
+      magBox.innerHTML = ''; rowsM = [];
+      ((s.periods || {})[per.value] || []).forEach(function (m) {
+        var q = reqOf(m);
+        var cb = el('input', { type: 'checkbox', style: 'width:22px;height:22px;margin:0 0 0 8px;flex:none' });
+        var n = el('input', { type: 'number', inputmode: 'numeric', placeholder: 'العدد', style: 'width:72px;margin:0;padding:9px;text-align:center;flex:none' });
+        if (isPre(m)) { cb.checked = true; if (q) n.value = q; }
+        n.disabled = !cb.checked;
+        cb.onchange = function () { n.disabled = !cb.checked; if (cb.checked && !n.value && q) n.value = q; };
+        rowsM.push({ m: m, cb: cb, n: n });
+        magBox.appendChild(el('label', { style: 'display:flex;align-items:center;gap:6px;padding:9px 2px;border-bottom:1px solid #eee;font-size:16px' }, [
+          cb, el('span', { style: 'flex:1' }, [document.createTextNode(m), q ? el('small', { style: 'display:block;color:var(--mut);font-size:12px', text: 'المطلوب: ' + q }) : null]), n]));
+      });
+    };
+    Object.keys(s.periods || {}).some(function (k) { return s.periods[k].some(isPre) && (per.value = k, true); });
+    box.appendChild(el('p', { cls: 'hint', text: 'نوع الدورية' })); box.appendChild(per);
+    box.appendChild(el('p', { cls: 'hint', text: 'المجلة وعدد النسخ المسلّمة' })); box.appendChild(magBox);
+    if (per.value) per.onchange();
+    var ch = el('select', {}, [el('option', { value: '', text: 'اختار طريقة الاستلام' })].concat(
+      (s.options || []).map(function (x) { return el('option', { value: x, text: x }); })));
+    var tx = el('input', { type: 'text', placeholder: s.textLabel || 'التفاصيل', style: 'display:none' });
+    ch.onchange = function () { tx.style.display = (s.textFor || []).indexOf(ch.value) !== -1 ? '' : 'none'; };
+    box.appendChild(el('p', { cls: 'hint', style: 'margin-top:12px;font-weight:bold;color:var(--ink)', text: 'طريقة الاستلام' }));
+    box.appendChild(ch); box.appendChild(tx);
+    box.appendChild(el('button', { cls: 'big ok', text: 'تسجيل التسليم', onclick: function () {
+      if (!per.value) return alert('اختار نوع الدورية');
+      var mags = rowsM.filter(function (r) { return r.cb.checked; });
+      if (!mags.length) return alert('اختار اسم المجلة');
+      for (var i = 0; i < mags.length; i++) if (mags[i].n.value === '' || Number(mags[i].n.value) < 0) { mags[i].n.focus(); return alert('اكتب عدد النسخ لـ ' + mags[i].m); }
+      if (!ch.value) return alert('اختار طريقة الاستلام');
+      if ((s.textFor || []).indexOf(ch.value) !== -1 && !tx.value.trim()) { tx.focus(); return alert('اكتب ' + (s.textLabel || 'التفاصيل')); }
+      getPos().catch(function () { return {}; }).then(function (pos) {
+        stepCall(v, { period: per.value, mags: mags.map(function (r) { return { mag: r.m, n: r.n.value }; }),
+                      choice: ch.value, text: tx.value.trim(), lat: pos.lat, lng: pos.lng });
+      });
+    } }));
+
+  } else if (s.kind === 'mag') {
+    var per = el('select', {}, [el('option', { value: '', text: 'نوع الدورية' })].concat(
+      Object.keys(s.periods || {}).map(function (x) { return el('option', { value: x, text: x }); })));
+    var magBox = el('div', {}, []);
+    var hintTxt = String(v.deliveries.map(function (d) { return (d.fields || []).map(function (f) { return f[1]; }).join(' '); }).join(' ') + ' ' +
+                         (v.fields || []).map(function (f) { return f[1]; }).join(' '));
+    // من تاب خط سير الدوريات: أسامي المجلات بالظبط (عشان "ميكي جيب" ما تتلخبطش مع "ميكي")
+    var labels = v.deliveries.map(function (d) { return d.label; }).filter(Boolean);
+    var isPre = function (m) { return labels.length ? labels.indexOf(m) !== -1 : hintTxt.indexOf(m.replace('مجلة ', '')) !== -1; };
+    per.onchange = function () {
+      magBox.innerHTML = '';
+      ((s.periods || {})[per.value] || []).forEach(function (m) {
+        var cb = el('input', { type: 'checkbox', value: m, style: 'width:22px;height:22px;margin-left:8px' });
+        if (isPre(m)) cb.checked = true;
+        magBox.appendChild(el('label', { style: 'display:flex;align-items:center;padding:10px 4px;font-size:17px;border-bottom:1px solid #eee' }, [cb, document.createTextNode(m)]));
+      });
+      if (per.value) magBox.insertBefore(el('p', { cls: 'hint', text: 'اسم المجلة (ممكن تختار أكتر من واحدة)' }), magBox.firstChild);
+    };
+    // لو المجلة مكتوبة في خط السير، النوع بيتختار لوحده
+    Object.keys(s.periods || {}).some(function (k) {
+      return s.periods[k].some(isPre) && (per.value = k, true);
+    });
+    box.appendChild(el('p', { cls: 'hint', text: 'نوع الدورية' })); box.appendChild(per); box.appendChild(magBox);
+    if (per.value) per.onchange();
+    box.appendChild(el('button', { cls: 'big ok', text: 'تسجيل', onclick: function () {
+      if (!per.value) return alert('اختار نوع الدورية');
+      var mags = Array.prototype.slice.call(magBox.querySelectorAll('input:checked')).map(function (x) { return x.value; });
+      if (!mags.length) return alert('اختار اسم المجلة');
+      stepCall(v, { period: per.value, mags: mags });
+    } }));
+
+  } else if (s.kind === 'form') {
+    var fins = {};
+    (s.fields || []).forEach(function (f) {
+      box.appendChild(el('p', { cls: 'hint', text: f }));
+      fins[f] = el('input', { type: 'text' });
+      box.appendChild(fins[f]);
+    });
+    box.appendChild(el('button', { cls: 'big ok', text: 'حفظ', onclick: function () {
+      var vals = {};
+      for (var i = 0; i < (s.fields || []).length; i++) {
+        var f = s.fields[i];
+        if (!fins[f].value.trim()) return alert('اكتب ' + f);
+        vals[f] = fins[f].value.trim();
+      }
+      stepCall(v, { fields: vals });
+    } }));
+
+  } else if (s.kind === 'amount') {
+    var amt = el('input', { type: 'number', inputmode: 'decimal', placeholder: 'المبلغ بالجنيه' });
+    var mth = el('select', {}, [el('option', { value: '', text: 'طريقة الدفع' })].concat(
+      (s.methods || []).map(function (x) { return el('option', { value: x, text: x }); })));
+    box.appendChild(el('p', { cls: 'hint', text: 'المبلغ' })); box.appendChild(amt);
+    box.appendChild(mth);
+    box.appendChild(el('p', { cls: 'hint', text: 'صورة الإيصال (إجباري)' }));
+    var alist = (v.stepPhotos || {})[s.key] || [];
+    box.appendChild(stepPhotoBox(v, s, alist));
+    box.appendChild(el('button', { cls: 'big ok', text: 'تسجيل المبلغ', onclick: function () {
+      if (!(Number(amt.value) > 0)) return alert('اكتب المبلغ');
+      if (!mth.value) return alert('اختار طريقة الدفع');
+      if (!alist.length) return alert('ارفع صورة الإيصال');
+      if (confirm('تأكيد استلام ' + amt.value + ' جنيه (' + mth.value + ')؟')) stepCall(v, { amount: amt.value, method: mth.value });
+    } }));
+
+  } else if (s.kind === 'approval') {
+    box.appendChild(el('div', { cls: 'msg info', text: 'مستني مراجعة الإدارة. هتقدر تكمّل أول ما المشرف يوافق، اعمل "تحديث" بعد شوية.' }));
+
+  } else if (s.kind === 'check') {
+    box.appendChild(el('p', { cls: 'hint', text: s.question || s.title }));
+    if (v.po) box.appendChild(row('رقم PO', v.po));
+    var cm = el('textarea', { rows: '2', placeholder: 'تعليق (إجباري لو غير مطابق)' });
+    box.appendChild(cm);
+    box.appendChild(el('button', { cls: 'big ok', text: 'مطابق', onclick: function () { stepCall(v, { ok: true, comment: cm.value.trim() }); } }));
+    box.appendChild(el('button', { cls: 'big ghost', text: 'غير مطابق', onclick: function () {
+      if (cm.value.trim().length < 3) { cm.focus(); return alert('اكتب سبب عدم المطابقة'); }
+      if (confirm('هيتسجل إن الشحنة غير مطابقة والزيارة هتستنى قرار المشرف. تكمل؟')) stepCall(v, { ok: false, comment: cm.value.trim() });
+    } }));
+
+  } else if (s.kind === 'close') {
+    box.appendChild(el('p', { cls: 'hint', text: v.flow === 'periodicals' ? 'التسليم اتسجل. دوس قفل الزيارة (الزيارة هتتقفل على طول، مفيش تسليم مالي).' : 'كل الخطوات خلصت. دوس قفل الزيارة.' }));
+    box.appendChild(el('button', { cls: 'big ok', text: 'قفل الزيارة', onclick: function () {
+      if (confirm('تقفل الزيارة؟')) stepCall(v, {});
+    } }));
+
+  } else {
+    box.appendChild(el('p', { cls: 'hint', text: 'هيتسجل موقعك الحالي مع الوقت.' }));
+    box.appendChild(el('button', { cls: 'big ok', text: 'تسجيل اللوكيشن', onclick: function () { gpsCall(v, {}); } }));
+  }
+  app.appendChild(box);
+  var ci = countIdx(v);
+  if (ci !== -1 && v.step > ci && v.step < steps.length) {
+    app.appendChild(el('button', { cls: 'big plain', text: 'تعديل العدد', onclick: function () { editCountForm(v); } }));
+  }
+  app.appendChild(el('button', { cls: 'big plain', text: 'ملاحظات مسؤول التسليم', onclick: function () { noteForm(v); } }));
+  app.appendChild(el('button', { cls: 'big plain', text: 'تحديث بيانات العميل', onclick: function () { editForm(v); } }));
+  if (['delivery', 'app', 'returns'].indexOf(v.flow || 'delivery') !== -1 && !v.retPending) app.appendChild(el('button', { cls: 'big ghost', text: '⏸ العميل طلب التأجيل', onclick: function () { postponeForm(v); } }));
+  app.appendChild(el('button', { cls: 'big ghost', text: 'فيه مشكلة', onclick: function () { issueForm(v); } }));
+}
+
+// التأجيل (الثقافي والخدمات والأبلكيشن والمرتجعات): ملاحظة إجبارية، والزيارة تتقفل، وإيميل للمشرفين
+function postponeForm(v) {
+  S.sub = true;
+  setHeader('العميل طلب التأجيل', true);
+  app.innerHTML = '';
+  var note = el('textarea', { rows: '4', placeholder: 'ملاحظات: سبب التأجيل، والميعاد اللي العميل طلبه...' });
+  var send = el('button', { cls: 'big ok', text: 'تأكيد التأجيل وقفل الزيارة', onclick: function () {
+    if (note.value.trim().length < 3) { note.focus(); return alert('اكتب ملاحظة التأجيل'); }
+    if (!confirm('الزيارة هتتقفل على طول. متأكد؟')) return;
+    var p = {};
+    var job = (v.step > 0 ? getPos().catch(function () { return {}; }) : Promise.resolve({}))
+      .then(function (pos) { p.lat = pos.lat; p.lng = pos.lng; return call('postponeVisit', S.phone, S.pin, v.vk, note.value, p); });
+    run(job, 'جاري الحفظ...').then(function (d) { apply(d); showList(); }).catch(function () {});
+  } });
+  app.appendChild(el('div', { cls: 'card' }, [
+    el('h2', { text: v.customer || 'زيارة' }),
+    el('p', { cls: 'hint', text: 'ملاحظات (إجباري)' }), note,
+    el('p', { cls: 'hint', text: 'الزيارة هتتقفل ومفيش تسليم مالي، وهيتبعت إيميل للمشرفين.' }), send
+  ]));
+}
+
+// ملاحظات مسؤول التسليم: v = الزيارة، أو null = ملاحظة عامة على اليوم
+function noteForm(v) {
+  S.sub = !!v; S.noteGeneral = !v;
+  setHeader('ملاحظات مسؤول التسليم', true);
+  app.innerHTML = '';
+  var sel = el('select', {}, [el('option', { value: '', text: 'اختار السبب' })].concat(
+    S.noteReasons.map(function (t) { return el('option', { value: t, text: t }); })));
+  var txt = el('textarea', { rows: '4', placeholder: 'اكتب التفاصيل (مثلًا: السواق اتأخر ساعة، العربية عطلت عند ...)' });
+  app.appendChild(el('div', { cls: 'card' }, [
+    el('h2', { text: v ? 'ملاحظة على: ' + (v.customer || v.key) : 'ملاحظة عامة على اليوم' }),
+    el('p', { cls: 'hint', text: 'الملاحظة بتتسجل بالوقت واللوكيشن، وبتوصل للمشرفين على الإيميل. مش بتوقف الزيارة.' }),
+    sel, txt,
+    el('button', { cls: 'big', text: 'إرسال الملاحظة', onclick: function () {
+      if (!sel.value) return alert('اختار السبب');
+      if (sel.value === 'أخرى' && txt.value.trim().length < 3) return alert('اكتب الملاحظة');
+      var job = getPos().catch(function () { return {}; }).then(function (pos) {
+        return call('addNote', S.phone, S.pin, v ? v.vk : '', sel.value, txt.value.trim(), { lat: pos.lat, lng: pos.lng });
+      });
+      run(job, 'جاري الإرسال...').then(function (d) {
+        alert('اتبعتت الملاحظة.');
+        apply(d); S.noteGeneral = false; v ? showVisit() : showList();
+      }).catch(function () {});
+    } })
+  ]));
+}
+
+function editForm(v) {
+  S.sub = true;
+  setHeader('تحديث بيانات العميل', true);
+  app.innerHTML = '';
+  var fields = S.edit.map(function (k) { return [k, S.labels[k] || k, k === 'mobile' ? 'tel' : 'text']; });
+  var inputs = {};
+  var card = el('div', { cls: 'card' }, [
+    el('h2', { text: v.customer }),
+    el('p', { cls: 'hint', text: 'التحديث بيتطبق على كل أذون الزيارة. عدّل اللي اتغير بس، والقديم هيتسجل في السجل.' })
+  ]);
+  fields.forEach(function (f) {
+    var inp = el('input', { type: f[2] });
+    inp.value = v[f[0]] || '';
+    inputs[f[0]] = inp;
+    card.appendChild(el('p', { cls: 'hint', text: f[1] }));
+    card.appendChild(inp);
+  });
+  var noteAdd = el('textarea', { rows: '2', placeholder: 'ملاحظة جديدة تتضاف على ملاحظات الطلبية' });
+  var reason = el('input', { type: 'text', placeholder: 'مثلًا: العميل نقل، رقم جديد للمسؤول' });
+  card.appendChild(el('p', { cls: 'hint', text: 'إضافة ملاحظة' })); card.appendChild(noteAdd);
+  card.appendChild(el('p', { cls: 'hint', text: 'سبب التحديث (اختياري)' })); card.appendChild(reason);
+  card.appendChild(el('button', { cls: 'big ok', text: 'حفظ التحديث', onclick: function () {
+    var data = {}, changed = false;
+    fields.forEach(function (f) {
+      data[f[0]] = inputs[f[0]].value.trim();
+      if (data[f[0]] !== (v[f[0]] || '')) changed = true;
+    });
+    data.noteAdd = noteAdd.value.trim();
+    if (data.noteAdd) changed = true;
+    if (!changed) return alert('مفيش أي تغيير في البيانات');
+    data.reason = reason.value.trim();
+    run(call('updateCustomer', S.phone, S.pin, v.vk, data), 'جاري الحفظ...').then(after).catch(function () {});
+  } }));
+  app.appendChild(card);
+}
+
+function issueForm(v) {
+  S.sub = true;
+  setHeader('تسجيل مشكلة', true);
+  app.innerHTML = '';
+  var sel = el('select', {}, [el('option', { value: '', text: 'اختار نوع المشكلة' })].concat(
+    ISSUES.map(function (t) { return el('option', { value: t, text: t }); })));
+  var live = v.deliveries.filter(function (d) { return d.status !== ST_CLOSED; });
+  var scope = el('select', {}, [el('option', { value: '', text: 'الزيارة كلها (كل الأذون المفتوحة)' })].concat(
+    live.map(function (d) { return el('option', { value: d.id, text: dName(d) + ' بس' }); })));
+  var note = el('textarea', { rows: '5', placeholder: 'اكتب اللي حصل بالتفصيل: مين اتكلمت معاه، إيه السبب، وإيه الحل اللي اقترحه العميل...' });
+  var file = el('input', { type: 'file', accept: 'image/*', capture: 'environment' });
+  var send = el('button', { cls: 'big', text: 'إرسال للمشرف', onclick: function () {
+    if (!sel.value) return alert('اختار نوع المشكلة');
+    if (note.value.trim().length < 5) { note.focus(); return alert('اكتب شرح المشكلة'); }
+    var p = { deliveryId: scope.value };
+    var job = getPos().catch(function () { return {}; })
+      .then(function (pos) { p.lat = pos.lat; p.lng = pos.lng; return readPhoto(file.files[0]); })
+      .then(function (b64) { if (b64) p.photo = b64; return call('reportIssue', S.phone, S.pin, v.vk, sel.value, note.value, p); });
+    run(job, 'جاري الإرسال...').then(after).catch(function () {});
+  } });
+  app.appendChild(el('div', { cls: 'card' }, [
+    el('h2', { text: v.customer }), sel,
+    el('p', { cls: 'hint', text: 'المشكلة على:' }), scope,
+    el('p', { cls: 'hint', text: 'شرح المشكلة (إجباري)' }), note,
+    el('p', { cls: 'hint', text: 'صورة (اختياري):' }), file, send
+  ]));
+}
+
+function adminPanel(v) {
+  var info = [];
+  if (v.photos) info.push('صور الأذون: ' + v.photos);
+  if (v.retQty) info.push('المرتجع: ' + v.retQty + (v.retPending ? ' (لسه ماتسلمش للمخزن)' : ' (اتسلم للمخزن)'));
+  if (v.retPhotos) info.push('صور استلام المخزن: ' + v.retPhotos);
+  if (info.length) app.appendChild(el('div', { cls: v.retPending ? 'msg info' : 'card' }, [el('div', { text: info.join(' - ') })]));
+  var ready = v.deliveries.filter(function (d) { return d.status === ST_DONE; });
+  if (ready.length > 1 && !v.retPending && v.flow !== 'subscription' && v.flow !== 'app') {
+    app.appendChild(el('button', { cls: 'big plain', text: 'تسليم كل الأذون المتسلمة للمالية (' + ready.length + ')', onclick: function () {
+      if (confirm('تأكيد تسليم ' + ready.length + ' أذون للمالية؟')) act(v, 'close');
+    } }));
+  }
+  if (v.retPending) app.appendChild(el('div', { cls: 'msg info', text: 'التسليم للمالية مستني المرتجع يتسلم للمخزن.' }));
+  if (v.flow === 'app') {
+    var ac2 = el('div', { cls: 'card' }, [el('h2', { text: 'التحصيل' }),
+      row('قيمة الأوردر', v.value ? fmtN(v.value) + ' جنيه' : 'مش مكتوبة'),
+      row('المبلغ المحصل', v.collected ? fmtN(v.collected.amount) + ' جنيه' : 'لسه ما اتحصلش')]);
+    if (v.collected && v.value && v.collected.amount !== v.value) {
+      var nt = (String(v.collected.note).match(/تعديل:\s*(.*)$/) || [])[1];
+      ac2.appendChild(el('div', { cls: 'msg info', text: '⚠ المبلغ اتعدّل' + (nt ? ': ' + nt : '') }));
+    }
+    var allDone = v.deliveries.every(function (d) { return d.status === ST_DONE || d.status === ST_CLOSED || d.status === ST_ISSUE; }) &&
+                  v.deliveries.some(function (d) { return d.status === ST_DONE; });
+    if (allDone && !v.retPending) ac2.appendChild(el('div', { cls: 'msg info', text: 'تأكيد استلام المبلغ بيتعمل مرة واحدة على اليوم من كارت "سداد عملاء الأبلكيشن" في الشاشة الرئيسية.', onclick: function () { S.day = v.iso || S.day; showList(); } }));
+    else if (v.retPending) ac2.appendChild(el('div', { cls: 'hint', text: 'القفل مستني المرتجع يتسلم للمخزن.' }));
+    app.appendChild(ac2);
+  }
+  if (v.flow === 'subscription') {
+    var rc = (v.stepPhotos || {}).amount || [];
+    var sc = el('div', { cls: 'card' }, [el('h2', { text: 'مراجعة السداد' }),
+      el('p', { cls: 'hint', text: rc.length ? 'صورة الإيصال:' : 'لسه مفيش إيصال.' }), photoList(v, 'amount', rc)]);
+    if (v.status === 'تم السداد والتسليم') {
+      sc.appendChild(el('p', { cls: 'hint', text: 'المجلة والمبلغ المحصل مكتوبين في سجل الزيارة تحت.' }));
+      sc.appendChild(el('button', { cls: 'big ok', text: 'تأكيد السداد وقفل الزيارة', onclick: function () {
+        if (confirm('اتأكدت من السداد؟ الزيارة هتتقفل.')) act(v, 'close');
+      } }));
+    }
+    app.appendChild(sc);
+  }
+  var cur = stepsOf(v)[v.step];
+  if (cur && cur.kind === 'approval') {
+    app.appendChild(el('div', { cls: 'msg info', text: 'الزيارة مستنية موافقتك. راجع المبلغ والإيصال في سجل الزيارة تحت.' }));
+    app.appendChild(el('button', { cls: 'big ok', text: 'موافقة (المسؤول تسليم يكمّل تسديد الصحافة)', onclick: function () {
+      if (confirm('تأكيد الموافقة؟')) act(v, 'approve');
+    } }));
+  }
+  if (v.deliveries.some(function (d) { return d.status === ST_ISSUE; })) {
+    var isd = v.deliveries.filter(function (d) { return d.status === ST_ISSUE; })[0];
+    var chkIssue = !!isd && (stepsOf(v)[isd.step] || {}).kind === 'check';
+    app.appendChild(el('button', { cls: chkIssue ? 'big ok' : 'big plain', text: chkIssue ? 'تمت مراجعة المشكلة - المسؤول تسليم يكمّل الإجراء' : 'إعادة فتح الأذون اللي عليها مشكلة', onclick: function () { act(v, 'reopen'); } }));
+  }
+  var logCard = el('div', { cls: 'card' }, [el('h2', { text: 'سجل الزيارة' }), el('p', { cls: 'hint', text: 'جاري التحميل...' })]);
+  app.appendChild(logCard);
+  var key = v.vk;
+  call('getLog', S.phone, S.pin, key).then(function (rows) {
+    if (S.key !== key || S.sub) return;
+    logCard.innerHTML = '';
+    logCard.appendChild(el('h2', { text: 'سجل الزيارة' }));
+    if (!rows.length) { logCard.appendChild(el('p', { cls: 'hint', text: 'لا توجد خطوات مسجلة بعد.' })); return; }
+    rows.forEach(function (r) {
+      var links = el('div', {}, []);
+      if (r.lat && r.lng) links.appendChild(el('a', { href: 'https://www.google.com/maps?q=' + r.lat + ',' + r.lng, text: 'الموقع على الخريطة  ' }));
+      if (r.photo) links.appendChild(el('a', { href: r.photo, text: 'الصورة' }));
+      logCard.appendChild(el('div', { cls: 'logrow' }, [
+        el('b', { text: r.step }), el('small', { text: r.time + ' - ' + r.ids }),
+        r.note ? el('div', { text: r.note }) : null, links
+      ]));
+    });
+  }).catch(function (e) { logCard.lastChild.textContent = e.message; });
+}
+function act(v, action, deliveryId) {
+  run(call('adminAction', S.phone, S.pin, v.vk, action, deliveryId || '')).then(after).catch(function () {});
+}
+
+/* ---------- أزرار الهيدر ---------- */
+
+/* ---------- الداش بورد (للمشرف) ---------- */
+var MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+function dmy(iso) { return iso ? iso.slice(8) + '/' + iso.slice(5, 7) + '/' + iso.slice(0, 4) : ''; }
+function dm(iso) { return iso ? iso.slice(8) + '/' + iso.slice(5, 7) : ''; }
+function fmtN(n) { return Number(n || 0).toLocaleString('en-US'); }
+function dbTip(e, html) {
+  var t = document.getElementById('dbtip'); t.innerHTML = html; t.style.display = 'block';
+  t.style.left = Math.min(e.clientX + 12, innerWidth - 190) + 'px'; t.style.top = (e.clientY + 12) + 'px';
+}
+function dbTipOff() { document.getElementById('dbtip').style.display = 'none'; }
+// شرح بالوقوف (وضغطة طويلة على الموبايل) + كليك = فلتر، دبل كليك = تفاصيل
+function dbInteract(node, tipHtml, onSingle, onDouble) {
+  var on = function (n, ev, fn) { n.addEventListener(ev, fn); };
+  on(node, 'mousemove', function (e) { dbTip(e, typeof tipHtml === 'function' ? tipHtml() : tipHtml); });
+  on(node, 'mouseleave', dbTipOff);
+  var press = null;
+  on(node, 'touchstart', function (e) {
+    var t = e.touches[0];
+    press = setTimeout(function () { press = 'shown'; dbTip({ clientX: t.clientX, clientY: t.clientY - 60 }, typeof tipHtml === 'function' ? tipHtml() : tipHtml); }, 450);
+  }, { passive: true });
+  on(node, 'touchend', function (e) {
+    if (press === 'shown') { e.preventDefault(); setTimeout(dbTipOff, 2500); }
+    else clearTimeout(press);
+    press = null;
+  });
+  on(node, 'touchmove', function () { clearTimeout(press); press = null; }, { passive: true });
+  var timer = null;
+  on(node, 'click', function (e) {
+    if (e.target.closest && e.target.closest('button') && e.target.closest('button') !== node) return;
+    dbTipOff();
+    if (timer) { clearTimeout(timer); timer = null; if (onDouble) onDouble(); return; }
+    timer = setTimeout(function () { timer = null; if (onSingle) onSingle(); }, onDouble ? 280 : 0);
+  });
+  node.style.cursor = 'pointer';
+  return node;
+}
+function tipRows(title, rows, foot) {
+  return '<b>' + title + '</b>' + rows.map(function (r) { return '<div><span>' + r[0] + '</span><span>' + r[1] + '</span></div>'; }).join('') +
+         (foot ? '<p style="margin:6px 0 0;color:#898781;max-width:240px;white-space:normal">' + foot + '</p>' : '');
+}
+var CLS_TXT = { done: 'اتسلمت', closed: 'مقفولة', open: 'مفتوحة', issue: 'مشكلة', ret: 'مرتجع ما اتسلمش' };
+
+// شاشة التفاصيل: الزيارات اللي ورا رقم معيّن
+function dbDetails(title, filterFn, note) {
+  S.dashSubFn = function () { dbDetails(title, filterFn, note); };
+  var D = S.dashD;
+  var list = (D.list || []).filter(filterFn);
+  setHeader(title, true);
+  S.dashOn = true; S.dashSub = true;
+  app.classList.add('wide');
+  app.innerHTML = '';
+  var f = S.dashF;
+  app.appendChild(el('div', { cls: 'card' }, [el('b', { text: title + ' (' + list.length + ')' }),
+    el('div', { cls: 'hint', style: 'margin:4px 0 0', text: (D.from === D.to ? dmy(D.from) : 'من ' + dmy(D.from) + ' إلى ' + dmy(D.to)) + (note ? ' · ' + note : '') })]));
+  if (!list.length) { app.appendChild(el('div', { cls: 'card db-empty', text: 'مفيش زيارات' })); return; }
+  var t = el('table', { cls: 'db-tbl' }, [el('tr', {}, ['العميل', 'النوع', 'المسؤول تسليم', 'التاريخ', 'الحالة', ''].map(function (x) { return el('th', { text: x }); }))]);
+  list.sort(function (a, b) { return a.iso < b.iso ? 1 : a.iso > b.iso ? -1 : 0; }).forEach(function (v) {
+    var col = { done: '#0a7d0a', closed: '#52514e', open: '#9a6700', issue: '#d03b3b', ret: '#c2551f' }[v.cls];
+    var tr = el('tr', { cls: v.vk ? 'click' : '' }, [
+      el('td', { text: v.customer + (v.n > 1 ? ' (' + v.n + ' أذون)' : '') }), el('td', { text: v.type }), el('td', { text: v.courier }),
+      el('td', { text: dmy(v.iso) }),
+      el('td', { text: (v.label === 'جديدة' ? 'جديدة' : CLS_TXT[v.cls]) + (v.late ? ' · متأخرة' : ''), style: 'color:' + col + ';font-weight:bold' }),
+      el('td', {}, [v.vk ? el('button', { cls: 'db-chip', text: 'افتح', onclick: function () { dbOpenVisit(v.vk); } }) : el('small', { text: 'مؤرشفة', style: 'color:#898781' })])]);
+    if (v.vk) tr.ondblclick = function () { dbOpenVisit(v.vk); };
+    t.appendChild(tr);
+  });
+  app.appendChild(el('div', { cls: 'card db-scroll' }, [t]));
+}
+
+function showDashboard(f) {
+  f = f || S.dashF || { from: S.today, to: S.today };
+  S.dashF = f;
+  return run(call('getDashboard', S.phone, S.pin, f), 'جاري تحميل الداش بورد...').then(function (D) {
+    S.dashD = D; drawDashboard(D);
+  }).catch(function () {});
+}
+
+function drawDashboard(D) {
+  setHeader('الداش بورد', true);
+  S.dashOn = true; S.key = null; S.sub = false; S.dashSub = false; S.dashSubFn = null;
+  app.classList.add('wide');
+  app.innerHTML = '';
+  var f = S.dashF;
+  var go = function (nf) { var x = {}; Object.keys(f).forEach(function (k) { x[k] = f[k]; }); Object.keys(nf).forEach(function (k) { x[k] = nf[k]; }); showDashboard(x); };
+
+  // ===== الفلاتر =====
+  var bar = el('div', { cls: 'db-filters' }, []);
+  var dateBtn = el('button', { cls: 'db-date', text: '📅 ' + (D.from === D.to ? dmy(D.from) : 'من ' + dmy(D.from) + ' إلى ' + dmy(D.to)) + ' ▾' });
+  var cal = calendarBox(D, function (from, to) { go({ from: from, to: to }); });
+  cal.style.display = 'none';
+  dateBtn.onclick = function () { cal.style.display = cal.style.display === 'none' ? '' : 'none'; };
+  dateBtn.title = 'اختار يوم أو فترة. كل الأرقام تحت بتتحسب على تاريخ التسليم في خط السير.';
+  bar.appendChild(dateBtn); bar.appendChild(cal);
+  var sel = function (key, all, opts) {
+    var s = el('select', {}, [el('option', { value: '', text: all })].concat(opts.map(function (o) {
+      return el('option', { value: o[0], text: o[1] });
+    })));
+    s.value = f[key] || '';
+    s.title = 'فلتر: ' + all.replace('كل ', '') + '. اختار عشان الداش بورد كلها تتحسب عليه.';
+    s.onchange = function () { var o = {}; o[key] = s.value; go(o); };
+    return s;
+  };
+  bar.appendChild(sel('courier', 'كل مسؤولي التسليم', D.options.couriers.map(function (c) { return [c.phone, c.name]; })));
+  bar.appendChild(sel('wtype', 'كل أنواع العمل', D.options.types.map(function (t) { return [t, t]; })));
+  bar.appendChild(sel('store', 'كل المخازن', D.options.stores.map(function (t) { return [t, t]; })));
+  if (f.courier || f.wtype || f.store) bar.appendChild(el('button', { cls: 'db-chip', text: 'مسح الفلاتر', onclick: function () { go({ courier: '', wtype: '', store: '' }); } }));
+  bar.appendChild(el('button', { cls: 'db-chip', text: '🔄 تحديث الكيلومترات', title: 'بيحسب المسافات الجديدة من لوكيشنات مسؤولي التسليم (ممكن ياخد دقيقة)', onclick: function () {
+    run(call('refreshKm', S.phone, S.pin), 'جاري حساب الكيلومترات... ممكن ياخد دقيقة').then(function () { showDashboard(f); }).catch(function () {});
+  } }));
+  bar.appendChild(el('span', { style: 'font-size:12px;color:#898781;margin-right:auto', text: 'آخر تحديث ' + D.generated }));
+  app.appendChild(bar);
+
+  // ===== الأرقام =====
+  var K = D.kpi;
+  var kp = function (label, val, sub, color, tip, title, fn) {
+    var n = el('div', { cls: 'db-kpi' }, [el('div', { cls: 'l' }, [el('i', { cls: 'db-dot', style: 'background:' + color }), document.createTextNode(label)]),
+      el('div', { cls: 'v', text: val }), el('div', { cls: 's', text: sub })]);
+    return dbInteract(n, tipRows(label, [['العدد', val]], tip + '<br>دبل كليك: تفاصيل'), null, function () { dbDetails(title, fn); });
+  };
+  var is = function () { var a = arguments; return function (v) { return Array.prototype.indexOf.call(a, v.cls) !== -1; }; };
+  app.appendChild(el('div', { cls: 'hint', style: 'margin:-4px 0 8px', text: 'وقّف بالماوس على أي حاجة تعرف هي إيه (على الموبايل: ضغطة طويلة) · دبل كليك يفتح تفاصيلها' }));
+  app.appendChild(el('div', { cls: 'db-kpis' }, [
+    kp('إجمالي الزيارات', fmtN(K.total), D.from === D.to ? 'في اليوم' : 'في الفترة', '#2a78d6',
+       'كل الزيارات اللي تاريخ تسليمها في الفترة المختارة (بعد الفلاتر)، مفتوحة أو مقفولة.', 'كل الزيارات', function () { return true; }),
+    kp('✓ اتسلمت', fmtN(K.done), K.donePct + '% من الزيارات', '#0ca30c',
+       'زيارات المسؤول تسليم خلّص كل خطواتها: "تم التسليم" أو "تم السداد والتسليم" أو اتقفلت مع المالية.', 'الزيارات اللي اتسلمت', is('done', 'closed')),
+    kp('○ لسه مفتوحة', fmtN(K.open), 'جديدة أو شغالة', '#fab219',
+       'زيارات لسه ما بدأتش (جديدة) أو المسؤول تسليم في نص خطواتها.', 'الزيارات المفتوحة', is('open')),
+    kp('! مشاكل', fmtN(K.issues), 'مستنية قرارك', '#d03b3b',
+       'زيارات المسؤول تسليم بلّغ فيها عن مشكلة، ومستنية قرار المشرف (إعادة فتح أو مراجعة).', 'الزيارات اللي عليها مشكلة', is('issue')),
+    kp('↩ مرتجعات ما اتسلمتش', fmtN(K.returns), 'للمخزن', '#ec835a',
+       'زيارات فيها مرتجع، ومسؤول التسليم لسه ما سلّموش للمخزن.', 'مرتجعات ما اتسلمتش للمخزن', is('ret')),
+    kp('مستنية المالية', fmtN(K.finance), K.financeLate ? K.financeLate + ' منها أكتر من 48 ساعة' : 'اتسلمت ومستنية القفل', '#fab219',
+       'زيارات اتسلمت والمشرف لسه ما قفلهاش مع المالية' + (K.financeLate ? '، منها ' + K.financeLate + ' عدّى عليها أكتر من 48 ساعة.' : '.'), 'مستنية المالية', is('done')),
+    kp('التحصيل', fmtN(K.money) + ' ج', 'اشتراكات + عملاء الأبلكيشن', '#2a78d6',
+       'مجموع المبالغ اللي مسؤولي التسليم حصّلوها في الفترة: تجديد الاشتراكات وقيمة أوردرات عملاء الأبلكيشن.', 'زيارات فيها تحصيل', function (v) { return v.type === 'تجديد اشتراك' || v.type === 'عملاء الأبلكيشن'; }),
+    kp('الكيلومترات', K.km === null ? '—' : fmtN(K.km) + ' كم', K.km === null ? 'بتتحسب بمسؤول التسليم واليوم بس' : 'من تقرير الكيلومترات', '#2a78d6',
+       'مجموع الكيلومترات بالطريق الفعلي من تقرير الكيلومترات (بيتحدث كل يوم 5:45). الدوريات وعملاء الأبلكيشن شاملين الرايح والجاي للمقر.', 'كل الزيارات', function () { return true; })
+  ]));
+
+  // ===== يوم بيوم + نوع العمل =====
+  var trendCard = el('div', { cls: 'card db-card' }, [el('h3', { text: 'الزيارات يوم بيوم' }),
+    el('div', { cls: 'sub', text: D.daily.length > 1 ? 'وقّف على أي يوم تشوف أرقامه · كليك: اليوم ده لوحده · دبل كليك: زياراته' : 'وقّف على العمود تشوف أرقامه · دبل كليك: زياراته' }),
+    el('div', { cls: 'db-leg' }, [
+      el('span', {}, [el('i', { cls: 'db-dot', style: 'background:#0ca30c' }), document.createTextNode('✓ اتسلمت')]),
+      el('span', {}, [el('i', { cls: 'db-dot', style: 'background:#fab219' }), document.createTextNode('○ مفتوحة')]),
+      el('span', {}, [el('i', { cls: 'db-dot', style: 'background:#d03b3b' }), document.createTextNode('! مشكلة')])])]);
+  var trendSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  trendSvg.setAttribute('width', '100%'); trendSvg.setAttribute('height', '230');
+  trendCard.appendChild(trendSvg);
+  var typeCard = el('div', { cls: 'card db-card' }, [el('h3', { text: 'حسب نوع العمل' }), el('div', { cls: 'sub', text: 'الأخضر = اتسلم · كليك: فلتر · دبل كليك: الزيارات' })]);
+  var tmax = Math.max.apply(null, D.types.map(function (t) { return t.total; }).concat([1]));
+  if (!D.types.length) typeCard.appendChild(el('div', { cls: 'db-empty', text: 'مفيش زيارات في الفترة دي' }));
+  D.types.forEach(function (t) {
+    var row = el('div', { cls: 'db-hbar', style: 'cursor:pointer' }, [el('span', { text: t.type }),
+      el('div', { cls: 't' }, [el('i', { style: 'width:' + (t.done / tmax * 100) + '%;background:#0ca30c' + (t.done && t.done < t.total ? ';margin-left:2px' : '') }),
+                              el('i', { style: 'width:' + ((t.total - t.done) / tmax * 100) + '%;background:#9ec5f4' })]),
+      el('span', { cls: 'n', text: t.total })]);
+    dbInteract(row, tipRows(t.type, [['الزيارات', t.total], ['✓ اتسلمت', t.done], ['لسه', t.total - t.done]], 'كليك: فلتر الداش بورد على النوع ده · دبل كليك: زياراته'),
+      function () { go({ wtype: t.type }); },
+      function () { dbDetails('زيارات ' + t.type, function (v) { return v.type === t.type; }); });
+    typeCard.appendChild(row);
+  });
+  app.appendChild(el('div', { cls: 'db-g2' }, [trendCard, typeCard]));
+  drawTrend(trendSvg, D.daily, function (iso) { go({ from: iso, to: iso }); });
+
+  // ===== مسؤولي التسليم =====
+  var ct = el('table', { cls: 'db-tbl' }, [el('tr', {}, ['المسؤول تسليم', 'الزيارات', 'اتسلمت', 'مشاكل', 'مرتجعات', 'كم', 'التحصيل',
+    D.from === D.to ? 'أول خطوة' : 'متوسط أول خطوة', D.from === D.to ? 'آخر خطوة' : 'متوسط آخر خطوة'].map(function (x) { return el('th', { text: x }); }))]);
+  D.couriers.forEach(function (c) {
+    var p = c.visits ? Math.round(c.done / c.visits * 100) : 0;
+    var tr = el('tr', { cls: 'click' }, [
+      el('td', {}, [el('a', { href: 'javascript:void 0', text: c.name })]),
+      el('td', { text: c.visits }),
+      el('td', {}, [document.createTextNode(c.done), el('span', { cls: 'db-mini' }, [el('i', { style: 'width:' + p + '%' })]), document.createTextNode(p + '%')]),
+      el('td', { text: c.issues ? '! ' + c.issues : '0', style: c.issues ? 'color:#d03b3b;font-weight:bold' : '' }),
+      el('td', { text: c.returns }),
+      el('td', { text: K.km === null ? '—' : fmtN(c.km) }),
+      el('td', { text: c.money ? fmtN(c.money) + ' ج' : '-' }),
+      el('td', { text: c.first || '-' }), el('td', { text: c.last || '-' })]);
+    dbInteract(tr, tipRows(c.name, [['الزيارات', c.visits], ['✓ اتسلمت', c.done + ' (' + p + '%)'], ['! مشاكل', c.issues], ['↩ مرتجعات', c.returns],
+        ['كيلومترات', K.km === null ? '—' : fmtN(c.km)], ['التحصيل', fmtN(c.money) + ' ج'], ['أول / آخر خطوة', (c.first || '-') + ' / ' + (c.last || '-')]],
+        (D.from === D.to ? '' : 'أول وآخر خطوة = متوسط ' + c.days + ' يوم شغل. ') + 'كليك: فلتر على المسؤول تسليم · دبل كليك: زياراته'),
+      function () { go({ courier: c.phone }); },
+      function () { dbDetails('زيارات ' + c.name, function (v) { return v.phone === c.phone; }); });
+    ct.appendChild(tr);
+  });
+  var cc = el('div', { cls: 'card db-card' }, [el('h3', { text: 'أداء مسؤولي التسليم' }), el('div', { cls: 'sub', text: 'وقّف على المسؤول تسليم تشوف ملخصه · كليك: فلتر عليه · دبل كليك: زياراته' })]);
+  cc.appendChild(D.couriers.length ? el('div', { cls: 'db-scroll' }, [ct]) : el('div', { cls: 'db-empty', text: 'مفيش بيانات' }));
+  app.appendChild(cc);
+
+  // ===== محتاج تدخّل + الكيلومترات والتحصيل =====
+  var IC = { issue: ['!', '#d03b3b', 'افتح'], ret: ['↩', '#ec835a', 'افتح'], fin: ['⏱', '#b07800', 'قفل'], sub: ['⏱', '#b07800', 'راجع'] };
+  var ac = el('div', { cls: 'card db-card' }, [el('h3', { text: 'محتاج تدخّل' }),
+    el('div', { cls: 'sub', text: 'مشاكل، مرتجعات ما اتسلمتش، مالية متأخرة أكتر من 48 ساعة، واشتراكات مستنية مراجعة' })]);
+  if (!D.attention.length) ac.appendChild(el('div', { cls: 'db-empty', text: '✓ مفيش حاجة مستنياك في الفترة دي' }));
+  D.attention.forEach(function (a) {
+    var ic = IC[a.kind];
+    var TIP = { issue: 'المسؤول تسليم بلّغ عن مشكلة في الزيارة دي ومستنية قرارك.', ret: 'فيه مرتجع من الزيارة دي ما اتسلمش للمخزن لسه.',
+                fin: 'الزيارة اتسلمت من أكتر من 48 ساعة ولسه ما اتقفلتش مع المالية.', sub: 'المسؤول تسليم حصّل الاشتراك، ومستني تراجع الإيصال وتقفل.' };
+    var it = el('div', { cls: 'db-it' }, [
+      el('div', {}, [el('b', { text: ic[0] + ' ', style: 'color:' + ic[1] }), document.createTextNode(a.text), el('small', { text: a.sub })]),
+      a.vk ? el('button', { cls: 'db-chip', text: ic[2], onclick: function () { dbOpenVisit(a.vk); } }) : null]);
+    ac.appendChild(dbInteract(it, tipRows(a.text.split(' — ')[0], [], TIP[a.kind] + '<br>دبل كليك: فتح الزيارة'), null, a.vk ? function () { dbOpenVisit(a.vk); } : null));
+  });
+  var kc = el('div', { cls: 'card db-card' }, [el('h3', { text: 'الكيلومترات يوم بيوم' }),
+    el('div', { cls: 'sub', text: 'إجمالي ' + (f.courier ? 'المسؤول تسليم' : 'كل مسؤولي التسليم') + ' · وقّف على اليوم تشوف التحصيل · دبل كليك: زياراته' })]);
+  var kSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  kSvg.setAttribute('width', '100%'); kSvg.setAttribute('height', '200');
+  kc.appendChild(kSvg);
+  app.appendChild(el('div', { cls: 'db-g2' }, [ac, kc]));
+  drawKm(kSvg, D.daily, K.km === null);
+}
+
+// فتح زيارة من الداش بورد (والرجوع للداش بورد)
+function dbOpenVisit(vk) {
+  run(call('getData', S.phone, S.pin), 'جاري الفتح...').then(function (d) {
+    apply(d); S.key = vk; S.fromDash = true;
+    if (current()) showVisit(); else { alert('الزيارة دي مش موجودة. اعمل تحديث'); }
+  }).catch(function () {});
+}
+
+// كاليندر: يوم واحد أو فترة + اختيارات سريعة
+function calendarBox(D, onPick) {
+  var has = {}; (D.workDays || []).forEach(function (x) { has[x] = 1; });
+  var st = { a: D.from, b: D.to, pick: null, m: new Date(D.to.slice(0, 4), Number(D.to.slice(5, 7)) - 1, 1) };
+  var box = el('div', { cls: 'db-cal' }, []);
+  var iso = function (d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); };
+  var T = D.today, td = new Date(T.slice(0, 4), Number(T.slice(5, 7)) - 1, Number(T.slice(8)));
+  var add = function (n) { var x = new Date(td); x.setDate(x.getDate() + n); return iso(x); };
+  var dow = td.getDay();   // الأحد = 0
+  var presets = [['النهارده', T, T], ['امبارح', add(-1), add(-1)], ['الأسبوع ده', add(-dow), T],
+                 ['الشهر ده', T.slice(0, 8) + '01', T], ['آخر 30 يوم', add(-29), T]];
+  function draw() {
+    box.innerHTML = '';
+    box.appendChild(el('div', { cls: 'pre' }, presets.map(function (p) {
+      return el('button', { cls: 'db-chip' + (st.a === p[1] && st.b === p[2] ? ' on' : ''), text: p[0], onclick: function () { onPick(p[1], p[2]); } });
+    })));
+    box.appendChild(el('div', { cls: 'mh' }, [
+      el('button', { text: '›', onclick: function () { st.m = new Date(st.m.getFullYear(), st.m.getMonth() - 1, 1); draw(); } }),
+      el('b', { text: MONTHS[st.m.getMonth()] + ' ' + st.m.getFullYear() }),
+      el('button', { text: '‹', onclick: function () { st.m = new Date(st.m.getFullYear(), st.m.getMonth() + 1, 1); draw(); } })]));
+    var t = el('table', {}, [el('tr', {}, ['س', 'ح', 'ن', 'ث', 'ر', 'خ', 'ج'].map(function (x) { return el('th', { text: x }); }))]);
+    var y = st.m.getFullYear(), m = st.m.getMonth(), n = new Date(y, m + 1, 0).getDate();
+    var off = (new Date(y, m, 1).getDay() + 1) % 7, tr = el('tr', {}, []);
+    for (var i = 0; i < off; i++) tr.appendChild(el('td', { cls: 'e' }));
+    for (var d = 1; d <= n; d++) {
+      (function (d) {
+        var k = iso(new Date(y, m, d));
+        var a = st.pick || st.a, b = st.pick || st.b;
+        var c = (has[k] ? 'has ' : '') + (k === T ? 'tdy ' : '') + (k === a || k === b ? 'edge' : (k > a && k < b ? 'in' : ''));
+        tr.appendChild(el('td', { cls: c, text: d, onclick: function () {
+          if (!st.pick) { st.pick = k; draw(); return; }
+          var x = st.pick < k ? st.pick : k, z = st.pick < k ? k : st.pick;
+          st.pick = null; onPick(x, z);
+        } }));
+      })(d);
+      if (tr.children.length === 7) { t.appendChild(tr); tr = el('tr', {}, []); }
+    }
+    if (tr.children.length) t.appendChild(tr);
+    box.appendChild(t);
+    box.appendChild(el('div', { style: 'font-size:12px;color:#898781;margin-top:6px', text: st.pick ? 'دلوقتي دوس على يوم النهاية (أو نفس اليوم ليوم واحد)' : 'دوس على يوم البداية وبعدين يوم النهاية · دوستين على نفس اليوم = يوم واحد' }));
+  }
+  draw();
+  return box;
+}
+
+function svgEl(tag, attrs) { var e = document.createElementNS('http://www.w3.org/2000/svg', tag); Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); }); return e; }
+function niceMax(v) { var raw = Math.max(v, 4) / 4, p = Math.pow(10, Math.floor(Math.log10(raw))); var s = [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10], st = 10 * p; for (var i = 0; i < s.length; i++) if (s[i] * p >= raw) { st = s[i] * p; break; } return st * 4; }
+
+// عواميد متراكمة: اتسلمت / مفتوحة / مشكلة (من اليمين للشمال = الأقدم يمين)
+function drawTrend(svg, daily, onDay) {
+  var W = svg.clientWidth || 600, H = 230, pb = 26, pt = 8, pl = 6, pr = 34;
+  var max = niceMax(Math.max.apply(null, daily.map(function (d) { return d.done + d.open + d.issue; }).concat([1])));
+  var nd = daily.length, iw = (W - pl - pr) / nd, bw = Math.max(4, Math.min(34, iw * 0.6));
+  [0, max / 4, max / 2, 3 * max / 4, max].forEach(function (v, i) {
+    var y = H - pb - (v / max) * (H - pb - pt);
+    svg.appendChild(svgEl('line', { x1: pl, x2: W - pr, y1: y, y2: y, stroke: i ? '#e1e0d9' : '#c3c2b7' }));
+    var t = svgEl('text', { x: W - pr + 6, y: y + 4, 'font-size': 11, fill: '#898781' }); t.textContent = Math.round(v); svg.appendChild(t);
+  });
+  var every = Math.ceil(nd / Math.max(1, Math.floor((W - pl - pr) / 46)));
+  daily.forEach(function (d, i) {
+    var x = W - pr - (i + 0.5) * iw - bw / 2, y0 = H - pb;
+    var segs = [[d.done, '#0ca30c'], [d.open, '#fab219'], [d.issue, '#d03b3b']].filter(function (s) { return s[0] > 0; });
+    segs.forEach(function (s, k) {
+      var hh = s[0] / max * (H - pb - pt), y = y0 - hh, top = k === segs.length - 1;
+      svg.appendChild(svgEl('rect', { x: x, y: y, width: bw, height: Math.max(hh - (top ? 0 : 2), 1), rx: top ? 4 : 0, fill: s[1] }));
+      if (top && hh > 4) svg.appendChild(svgEl('rect', { x: x, y: y + 4, width: bw, height: Math.max(hh - 4 - (k ? 0 : 0), 0), fill: s[1] }));
+      y0 = y;
+    });
+    if (i % every === 0) { var t = svgEl('text', { x: x + bw / 2, y: H - 8, 'font-size': 11, fill: '#52514e', 'text-anchor': 'middle' }); t.textContent = dm(d.iso); svg.appendChild(t); }
+    var hit = svgEl('rect', { x: W - pr - (i + 1) * iw, y: pt, width: iw, height: H - pb - pt, fill: 'transparent', style: 'cursor:pointer' });
+    dbInteract(hit, tipRows(DAYS[new Date(d.iso + 'T12:00:00Z').getUTCDay()] + ' ' + dmy(d.iso),
+        [['✓ اتسلمت', d.done], ['○ مفتوحة', d.open], ['! مشكلة', d.issue], ['الإجمالي', d.done + d.open + d.issue]],
+        (daily.length > 1 ? 'كليك: الداش بورد لليوم ده بس · ' : '') + 'دبل كليك: زيارات اليوم'),
+      daily.length > 1 ? function () { onDay(d.iso); } : null,
+      function () { dbDetails('زيارات ' + dmy(d.iso), function (v) { return v.iso === d.iso; }); });
+    svg.appendChild(hit);
+  });
+}
+
+// خط الكيلومترات يوم بيوم
+function drawKm(svg, daily, hidden) {
+  var W = svg.clientWidth || 400, H = 200, pb = 26, pt = 10, pl = 6, pr = 40, ins = 18;
+  if (hidden) { var t0 = svgEl('text', { x: W / 2, y: H / 2, 'font-size': 13, fill: '#898781', 'text-anchor': 'middle' }); t0.textContent = 'الكيلومترات مش بتتفلتر بنوع العمل أو المخزن'; svg.appendChild(t0); return; }
+  var max = niceMax(Math.max.apply(null, daily.map(function (d) { return d.km; }).concat([1])));
+  [0, max / 4, max / 2, 3 * max / 4, max].forEach(function (v, i) {
+    var y = H - pb - (v / max) * (H - pb - pt);
+    svg.appendChild(svgEl('line', { x1: pl, x2: W - pr, y1: y, y2: y, stroke: i ? '#e1e0d9' : '#c3c2b7' }));
+    var t = svgEl('text', { x: W - pr + 6, y: y + 4, 'font-size': 11, fill: '#898781' }); t.textContent = Math.round(v); svg.appendChild(t);
+  });
+  var nd = daily.length, iw = nd > 1 ? (W - pl - pr - 2 * ins) / (nd - 1) : 0;
+  var pts = daily.map(function (d, i) { return [nd > 1 ? W - pr - ins - i * iw : (W - pr + pl) / 2, H - pb - (d.km / max) * (H - pb - pt)]; });
+  if (nd > 1) svg.appendChild(svgEl('polyline', { fill: 'none', stroke: '#2a78d6', 'stroke-width': 2, points: pts.map(function (p) { return p.join(','); }).join(' ') }));
+  var every = Math.ceil(nd / Math.max(1, Math.floor((W - pl - pr) / 46)));
+  daily.forEach(function (d, i) {
+    var p = pts[i];
+    if (nd <= 31) svg.appendChild(svgEl('circle', { cx: p[0], cy: p[1], r: 4, fill: '#2a78d6', stroke: '#fff', 'stroke-width': 2 }));
+    if (i % every === 0) { var t = svgEl('text', { x: p[0], y: H - 8, 'font-size': 11, fill: '#52514e', 'text-anchor': 'middle' }); t.textContent = dm(d.iso); svg.appendChild(t); }
+    var w = nd > 1 ? iw : 60;
+    var hit = svgEl('rect', { x: p[0] - w / 2, y: pt, width: w, height: H - pb - pt, fill: 'transparent' });
+    dbInteract(hit, tipRows(dmy(d.iso), [['كيلومترات', fmtN(d.km)], ['تحصيل', fmtN(d.money) + ' ج']], 'مجموع كل مسؤولي التسليم في اليوم · دبل كليك: زيارات اليوم'),
+      null, function () { dbDetails('زيارات ' + dmy(d.iso), function (v) { return v.iso === d.iso; }); });
+    svg.appendChild(hit);
+  });
+}
+
+document.getElementById('back').onclick = function () {
+  if (S.chatOn) {
+    if (S.user.role === 'admin' && S.chatCourier && !S.chatFromVisit) { S.chatCourier = null; showChat(); }
+    else { S.chatOn = false; S.chatFromVisit = false; showList(); }
+    return;
+  }
+  if (S.noteGeneral) { S.noteGeneral = false; showList(); }
+  else if (S.sub) showVisit();
+  else if (S.fromDash && S.key) { S.key = null; S.fromDash = false; if (S.dashSub && S.dashSubFn) S.dashSubFn(); else drawDashboard(S.dashD); }
+  else if (S.dashSub) { S.dashSub = false; S.dashSubFn = null; drawDashboard(S.dashD); }
+  else { S.fromDash = false; showList(); }
+};
+document.getElementById('refresh').onclick = function () { reload().catch(function () {}); };
+document.getElementById('logout').onclick = function () { forget(); S.phone = ''; S.pin = ''; showLogin(); };
+
+/* ---------- البداية ---------- */
+(function () {
+  var a = null;
+  try { a = JSON.parse(localStorage.getItem('dl_auth') || 'null'); } catch (e) {}
+  if (a && a.p && a.k) login(a.p, a.k).catch(function () { forget(); showLogin(); });
+  else showLogin();
+})();
+</script>
+</body>
+</html>
