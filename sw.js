@@ -1,5 +1,5 @@
 // بيخلّي الصفحة قابلة للتثبيت كأبلكيشن. الداتا كلها بتيجي أونلاين من جوجل
-const CACHE = 'nm-shell-v2';
+const CACHE = 'nm-shell-v3';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
@@ -22,10 +22,11 @@ firebase.initializeApp({
 });
 // الأبلكيشن مقفول أو في الخلفية: نطلّع الإشعار
 firebase.messaging().onBackgroundMessage(function (p) {
+  if (p && p.notification) return;   // الإشعار "المهم" المتصفح بيطلّعه بنفسه
   const d = (p && p.data) || {};
   return self.registration.showNotification(d.title || 'تسليمات نهضة مصر', {
     body: d.body || '', icon: 'icon-192.png', badge: 'icon-192.png', dir: 'rtl', lang: 'ar',
-    tag: 'nm-chat', renotify: true, data: { url: d.url || './' }
+    tag: 'nm-chat', renotify: true, vibrate: [200, 100, 200], data: { url: d.url || './' }
   });
 });
 // الضغط على الإشعار: يفتح الأبلكيشن (أو يرجع لصفحته لو مفتوحة)
