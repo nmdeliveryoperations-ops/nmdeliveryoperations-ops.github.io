@@ -40,5 +40,61 @@
   addEventListener('online', net); addEventListener('offline', net); net();
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
 </script>
+<!-- إشعارات الموبايل (Firebase Cloud Messaging) -->
+<div id="ask" style="display:none;position:fixed;left:12px;right:12px;bottom:16px;z-index:4;background:#15203a;color:#fff;border-radius:16px;padding:14px;font-family:Tahoma,Arial,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35)">
+  <div style="font-size:15px;margin-bottom:10px">🔔 فعّل الإشعارات عشان توصلك رسايل الشات والردود على طول</div>
+  <div style="display:flex;gap:8px">
+    <button id="askYes" style="flex:1;background:#13a35a;color:#fff;border:0;border-radius:10px;padding:11px;font-size:15px;font-family:inherit">فعّل الإشعارات</button>
+    <button id="askNo" style="background:transparent;color:#c9d3e8;border:1px solid #3b4a6e;border-radius:10px;padding:11px 14px;font-size:14px;font-family:inherit">مش دلوقتي</button>
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
+<script>
+  var FB_CONFIG = {
+    apiKey: "AIzaSyDskvnKAEBpp5N9u4FZ1cQB8FPJpV-VGLA",
+    authDomain: "delivery-team-49321.firebaseapp.com",
+    projectId: "delivery-team-49321",
+    storageBucket: "delivery-team-49321.firebasestorage.app",
+    messagingSenderId: "967652460258",
+    appId: "1:967652460258:web:d7bea8cb0f69ba86c9c0bb"
+  };
+  var VAPID = "BDZq3iBGPTPaMcNosQljoXOXf2Jd5_-vbt_0pd3Ehhq4LdZmWUV3pF-qb0joOwjtkBmO3WumNFhmph-NQvZtmHY";
+  var appWin = null, lastTok = null;
+  function pushOk() {
+    try { return 'serviceWorker' in navigator && 'Notification' in window && window.firebase && firebase.messaging.isSupported(); } catch (e) { return false; }
+  }
+  function sendTok(t) { lastTok = t; if (appWin) appWin.postMessage({ nm: 'token', token: t, device: navigator.userAgent }, '*'); }
+  function getTok() {
+    return navigator.serviceWorker.register('sw.js').then(function (reg) {
+      return navigator.serviceWorker.ready.then(function () {
+        return firebase.messaging().getToken({ vapidKey: VAPID, serviceWorkerRegistration: reg });
+      });
+    }).then(function (t) { if (t) sendTok(t); }).catch(function (e) { console.log('push token', e); });
+  }
+  var ask = document.getElementById('ask');
+  document.getElementById('askNo').onclick = function () { ask.style.display = 'none'; try { localStorage.setItem('nmAskLater', String(Date.now())); } catch (e) {} };
+  document.getElementById('askYes').onclick = function () {
+    ask.style.display = 'none';
+    Notification.requestPermission().then(function (p) { if (p === 'granted') getTok(); });
+  };
+  if (window.firebase) {
+    try { firebase.initializeApp(FB_CONFIG); } catch (e) {}
+    if (pushOk()) firebase.messaging().onMessage(function (p) {
+      // الأبلكيشن مفتوح: نبلّغه يحدّث الشات بدل الإشعار
+      if (appWin) appWin.postMessage({ nm: 'push', data: p && p.data }, '*');
+    });
+  }
+  addEventListener('message', function (e) {
+    if (!e.data || e.data.nm !== 'ready') return;
+    appWin = e.source;
+    if (!pushOk()) return;
+    if (Notification.permission === 'granted') getTok();
+    else if (Notification.permission === 'default') {
+      var later = 0; try { later = Number(localStorage.getItem('nmAskLater') || 0); } catch (x) {}
+      if (Date.now() - later > 864e5) ask.style.display = 'block';
+    }
+  });
+</script>
 </body>
 </html>
