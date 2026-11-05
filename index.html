@@ -19,14 +19,14 @@
   #splash img { width: 110px; height: 110px; border-radius: 24px; }
   #splash b { font-size: 20px; }
   #splash small { opacity: .8; }
-  #off { display: none; position: fixed; inset: 0; z-index: 3; background: #fff; color: #16233a;
-         align-items: center; justify-content: center; text-align: center; padding: 24px; flex-direction: column; gap: 12px; }
-  #off button { background: #1f3864; color: #fff; border: 0; border-radius: 10px; padding: 12px 24px; font-size: 16px; font-family: inherit; }
+  /* النت مقطوع: شريط صغير تحت بس، والأبلكيشن بيفضل شغال ومش بيتقفل */
+  #off { display: none; position: fixed; left: 10px; right: 10px; bottom: 10px; z-index: 3; background: #b71c1c; color: #fff;
+         border-radius: 12px; padding: 10px 14px; font-size: 14px; text-align: center; pointer-events: none; box-shadow: 0 6px 18px rgba(0,0,0,.3); }
 </style>
 </head>
 <body>
 <div id="splash"><img src="icon-512.png" alt=""><b>تسليمات نهضة مصر</b><small>جاري التحميل...</small></div>
-<div id="off"><b style="font-size:20px">مفيش إنترنت</b><div>اتأكد إن النت شغال وجرّب تاني.</div><button onclick="location.reload()">إعادة المحاولة</button></div>
+<div id="off">⚠ النت مقطوع أو ضعيف. كمّل عادي، والصور والخطوات هتتحفظ وتترفع أول ما النت يرجع.</div>
 <!-- السيستم نفسه (Google Apps Script) شغال جوه الصفحة دي -->
 <iframe id="app" title="نظام التسليم"
   allow="geolocation *; camera *; clipboard-write *"
@@ -36,7 +36,7 @@
   document.getElementById('app').addEventListener('load', function () {
     setTimeout(function () { sp.style.opacity = '0'; setTimeout(function () { sp.remove(); }, 400); }, 600);
   });
-  function net() { document.getElementById('off').style.display = navigator.onLine ? 'none' : 'flex'; }
+  function net() { document.getElementById('off').style.display = navigator.onLine ? 'none' : 'block'; }
   addEventListener('online', net); addEventListener('offline', net); net();
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
 </script>
@@ -61,6 +61,13 @@
   };
   var VAPID = "BDZq3iBGPTPaMcNosQljoXOXf2Jd5_-vbt_0pd3Ehhq4LdZmWUV3pF-qb0joOwjtkBmO3WumNFhmph-NQvZtmHY";
   var appWin = null, lastTok = null;
+  // الضغط على إشعار: ?open=chat:..|visit:.. أو رسالة من sw.js
+  var pendingOpen = (new URLSearchParams(location.search)).get('open') || '';
+  if (pendingOpen) try { history.replaceState(null, '', location.pathname); } catch (e) {}
+  function sendOpen(t) { if (!t) return; if (appWin) appWin.postMessage({ nm: 'open', open: t }, '*'); else pendingOpen = t; }
+  if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', function (e) {
+    if (e.data && e.data.nm === 'open') sendOpen(e.data.open);
+  });
   function pushOk() {
     try { return 'serviceWorker' in navigator && 'Notification' in window && window.firebase && firebase.messaging.isSupported(); } catch (e) { return false; }
   }
@@ -81,13 +88,21 @@
   if (window.firebase) {
     try { firebase.initializeApp(FB_CONFIG); } catch (e) {}
     if (pushOk()) firebase.messaging().onMessage(function (p) {
-      // الأبلكيشن مفتوح: نبلّغه يحدّث الشات بدل الإشعار
-      if (appWin) appWin.postMessage({ nm: 'push', data: p && p.data }, '*');
+      // الأبلكيشن مفتوح: الإشعار بيظهر برضه (فوق الشاشة) + الأبلكيشن بيتحدث
+      var d = (p && p.data) || {}, n = (p && p.notification) || {};
+      navigator.serviceWorker.ready.then(function (reg) {
+        return reg.showNotification(d.title || n.title || 'تسليمات نهضة مصر', {
+          body: d.body || n.body || '', icon: 'icon-192.png', badge: 'icon-192.png', dir: 'rtl', lang: 'ar',
+          tag: d.tag || 'nm', renotify: true, requireInteraction: d.important === '1',
+          vibrate: d.important === '1' ? [400, 150, 400, 150, 400] : [300, 120, 300], data: { open: d.open || '' } });
+      }).catch(function () {});
+      if (appWin) appWin.postMessage({ nm: 'push', data: d }, '*');
     });
   }
   addEventListener('message', function (e) {
     if (!e.data || e.data.nm !== 'ready') return;
     appWin = e.source;
+    if (pendingOpen) { var t = pendingOpen; pendingOpen = ''; appWin.postMessage({ nm: 'open', open: t }, '*'); }
     if (!pushOk()) return;
     if (Notification.permission === 'granted') getTok();
     else if (Notification.permission === 'default') {
