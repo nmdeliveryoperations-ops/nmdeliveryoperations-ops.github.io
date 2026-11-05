@@ -1,5 +1,5 @@
 // بيخلّي الصفحة قابلة للتثبيت كأبلكيشن. الداتا كلها بتيجي أونلاين من جوجل
-const CACHE = 'nm-shell-v3';
+const CACHE = 'nm-shell-v4';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
@@ -26,14 +26,19 @@ firebase.messaging().onBackgroundMessage(function (p) {
   const d = (p && p.data) || {};
   return self.registration.showNotification(d.title || 'تسليمات نهضة مصر', {
     body: d.body || '', icon: 'icon-192.png', badge: 'icon-192.png', dir: 'rtl', lang: 'ar',
-    tag: 'nm-chat', renotify: true, vibrate: [200, 100, 200], data: { url: d.url || './' }
+    tag: d.tag || 'nm', renotify: true, requireInteraction: d.important === '1',
+    vibrate: d.important === '1' ? [400, 150, 400, 150, 400] : [300, 120, 300], data: { open: d.open || '' }
   });
 });
-// الضغط على الإشعار: يفتح الأبلكيشن (أو يرجع لصفحته لو مفتوحة)
+// الضغط على الإشعار: يفتح الأبلكيشن على الشات أو الزيارة (ولو مفتوح يرجع عليه ويروح للمكان)
 self.addEventListener('notificationclick', function (e) {
   e.notification.close();
+  const d = e.notification.data || {};
+  const open = d.open || (d.FCM_MSG && d.FCM_MSG.data && d.FCM_MSG.data.open) || '';
   e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
-    for (const c of list) { if ('focus' in c) return c.focus(); }
-    return self.clients.openWindow('./');
+    for (const c of list) {
+      if ('focus' in c) { if (open) c.postMessage({ nm: 'open', open: open }); return c.focus(); }
+    }
+    return self.clients.openWindow('./' + (open ? '?open=' + encodeURIComponent(open) : ''));
   }));
 });
